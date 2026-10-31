@@ -109,8 +109,8 @@ if [ -d /usr/share/live/build/bootloaders ]; then
     for d in config/bootloaders/*/; do
         [ -f "$d/splash.png" ] || cp "$SPLASH" "$d/splash.png"
     done
-    grep -rl "Live system" config/bootloaders | xargs -r sed -i "s/Live system/Tunudan OS $EDITION_LABEL/g"
-    grep -rl "Debian GNU/Linux" config/bootloaders | xargs -r sed -i "s#Debian GNU/Linux#Tunudan OS#g"
+    { grep -rl "Live system" config/bootloaders || true; } | xargs -r sed -i "s/Live system/Tunudan OS $EDITION_LABEL/g"
+    { grep -rl "Debian GNU/Linux" config/bootloaders || true; } | xargs -r sed -i "s#Debian GNU/Linux#Tunudan OS#g"
 fi
 
 # 4. Construction

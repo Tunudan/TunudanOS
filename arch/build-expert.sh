@@ -23,7 +23,7 @@ cp -a "$RELENG" "$P"
 # 1. Le live démarre en graphique : on retire l'auto-connexion root sur tty1
 #    et systemd-networkd/iwd (remplacés par NetworkManager).
 rm -f "$P/airootfs/etc/systemd/system/getty@tty1.service.d/autologin.conf"
-find "$P/airootfs/etc/systemd/system" -name 'systemd-networkd*' -delete
+find "$P/airootfs/etc/systemd/system" -depth -name 'systemd-networkd*' -exec rm -rf {} +
 find "$P/airootfs/etc/systemd/system" -name 'iwd.service' -delete
 rm -rf "$P/airootfs/etc/systemd/network"
 
@@ -79,7 +79,7 @@ sed -i \
 sed -i '/^file_permissions=(/a\  ["/etc/sudoers.d/10-tunudan-live"]="0:0:440"\n  ["/usr/local/bin/tunudan-install"]="0:0:755"\n  ["/usr/local/bin/tunudan-niri-session"]="0:0:755"\n  ["/usr/local/bin/tunudan-help"]="0:0:755"\n  ["/usr/local/bin/tunudan-update"]="0:0:755"\n  ["/usr/local/bin/tunudan-welcome"]="0:0:755"\n  ["/usr/lib/tunudan/tunudan-update-root"]="0:0:755"\n  ["/usr/bin/tunudan-theme"]="0:0:755"\n  ["/usr/share/tunudan/themes/install-system.sh"]="0:0:755"\n  ["/usr/share/tunudan/themes-src/install-system.sh"]="0:0:755"' "$P/profiledef.sh"
 
 # 5. Menu de démarrage aux couleurs Tunudan
-grep -rl "Arch Linux install medium" "$P" --include='*.cfg' --include='*.conf' \
+{ grep -rl "Arch Linux install medium" "$P" --include='*.cfg' --include='*.conf' || true; } \
     | xargs -r sed -i 's/Arch Linux install medium/Tunudan OS Expert/g'
 [ -f "$P/syslinux/splash.png" ] && cp "$ROOT/branding/out/boot/splash-640x480.png" "$P/syslinux/splash.png"
 
