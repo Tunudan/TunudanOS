@@ -3,6 +3,10 @@ set -e
 if [ "$1" = "configure" ]; then
     if dpkg-divert --list /usr/lib/os-release | grep -q tunudan-settings; then
         ln -sf /usr/lib/tunudan/os-release /usr/lib/os-release
+        # debootstrap laisse parfois un vrai fichier /etc/os-release (celui de Debian)
+        if [ ! -L /etc/os-release ]; then
+            ln -sf ../usr/lib/os-release /etc/os-release
+        fi
     fi
     cp -f /usr/lib/tunudan/issue /etc/issue
     # Pare-feu : actif au prochain démarrage (pas de « ufw enable » dans un chroot)

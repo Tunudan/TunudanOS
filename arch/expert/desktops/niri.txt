@@ -1,7 +1,8 @@
-# niri : défilement horizontal + DankMaterialShell, connexion greetd/tuigreet
+# niri : défilement horizontal + Waybar (DankMaterialShell : AUR, voir docs/a-faire.md), connexion greetd/tuigreet
 niri
 xwayland-satellite
-dms-shell-niri
+waybar
+network-manager-applet
 greetd
 greetd-tuigreet
 xdg-desktop-portal-gnome

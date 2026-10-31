@@ -10,7 +10,7 @@ step "shellcheck"
 export LC_ALL=C.UTF-8
 # (les hooks écrits en Python sont vérifiés plus bas)
 find . -path ./out -prune -o -path ./packages/tunudan-theme/files/pack -prune -o -type f \
-    \( -name '*.sh' -o -name '*.hook.chroot' \) -print \
+    \( -name '*.sh' -o -name '*.hook.chroot' -o -name '*.hook.binary' \) -print \
     | while read -r f; do head -n1 "$f" | grep -q python || echo "$f"; done \
     | xargs shellcheck -S warning -x || fail=1
 shellcheck -S warning -x packages/tunudan-tools/src/tunudan-update-root \

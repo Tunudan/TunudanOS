@@ -75,9 +75,15 @@ lb config \
     [ "$CYBER" = 1 ] && echo "tunudan-pack-cyber"
 } > config/package-lists/tunudan.list.chroot
 
-# Paquets maison : live-build en fait un dépôt local
+# Paquets maison : live-build installe TOUS les .deb de packages.chroot, on n'y met
+# donc que ceux de l'édition (les autres bureaux vont dans /opt/tunudan/repo, plus bas)
 mkdir -p config/packages.chroot
-cp "$ROOT"/out/debs/*.deb config/packages.chroot/
+PKGS="tunudan-theme tunudan-settings tunudan-tools tunudan-edition-minimal"
+PKGS="$PKGS $({ grep -o '^tunudan-[a-z0-9-]*' "$ED_DIR/packages.list" || true; } | tr '\n' ' ')"
+[ "$CYBER" = 1 ] && PKGS="$PKGS tunudan-pack-cyber"
+for p in $PKGS; do
+    cp "$ROOT"/out/debs/"${p}"_*.deb config/packages.chroot/
+done
 
 # Fichiers et hooks : communs puis spécifiques à l'édition
 mkdir -p config/includes.chroot_after_packages config/hooks/live
@@ -97,7 +103,7 @@ fi
 mkdir -p config/includes.chroot_after_packages/usr/lib/live/config
 cp -a "$ROOT/debian-live/common/live-config/." config/includes.chroot_after_packages/usr/lib/live/config/
 # Valeurs propres à l'édition dans les hooks
-sed -i "s/@EDITION@/$EDITION/g; s/@VERSION@/$VERSION/g; s/@RUSTDESK@/${RUSTDESK:-no}/g" config/hooks/live/*
+sed -i "s/@EDITION@/$EDITION/g; s/@EDITION_LABEL@/$EDITION_LABEL/g; s/@VERSION@/$VERSION/g; s/@RUSTDESK@/${RUSTDESK:-no}/g" config/hooks/live/*
 chmod +x config/hooks/live/* config/includes.chroot_after_packages/usr/lib/live/config/*
 
 # 3. Menu de démarrage aux couleurs Tunudan
@@ -109,8 +115,8 @@ if [ -d /usr/share/live/build/bootloaders ]; then
     for d in config/bootloaders/*/; do
         [ -f "$d/splash.png" ] || cp "$SPLASH" "$d/splash.png"
     done
-    grep -rl "Live system" config/bootloaders | xargs -r sed -i "s/Live system/Tunudan OS $EDITION_LABEL/g"
-    grep -rl "Debian GNU/Linux" config/bootloaders | xargs -r sed -i "s#Debian GNU/Linux#Tunudan OS#g"
+    { grep -rl "Live system" config/bootloaders || true; } | xargs -r sed -i "s/Live system/Tunudan OS $EDITION_LABEL/g"
+    { grep -rl "Debian GNU/Linux" config/bootloaders || true; } | xargs -r sed -i "s#Debian GNU/Linux#Tunudan OS#g"
 fi
 
 # 4. Construction

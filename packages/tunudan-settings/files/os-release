@@ -1,7 +1,7 @@
-PRETTY_NAME="Tunudan OS 1.0 (base Debian 13 trixie)"
+PRETTY_NAME="Tunudan OS 0.4.0 (base Debian 13 trixie)"
 NAME="Tunudan OS"
-VERSION_ID="1.0"
-VERSION="1.0 (trixie)"
+VERSION_ID="0.4.0"
+VERSION="0.4.0 (trixie)"
 VERSION_CODENAME=trixie
 DEBIAN_VERSION_FULL=13
 ID=tunudan
@@ -10,4 +10,4 @@ LOGO=tunudan
 ANSI_COLOR="38;5;208"
 HOME_URL="https://tunudan.fr/os"
 SUPPORT_URL="https://tunudan.fr/aide"
-BUG_REPORT_URL="https://github.com/tunudan/tunudan-os/issues"
+BUG_REPORT_URL="https://github.com/Tunudan/TunudanOS/issues"

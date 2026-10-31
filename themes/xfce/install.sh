@@ -22,12 +22,15 @@ X xfce4-panel /panels/dark-mode bool true 2>/dev/null || true
 ok "Thème GTK, icônes, polices et décorations xfwm4"
 
 # Fond d'écran sur tous les écrans et espaces de travail
-props=$(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep -E '/last-image$' || true)
-if [ -z "$props" ]; then
-    for m in $(xrandr --listmonitors 2>/dev/null | awk 'NR>1 {print $NF}'); do
-        props="$props /backdrop/screen0/monitor$m/workspace0/last-image"
+# Xfce 4.20 lit /backdrop/screen0/monitor<sortie>/workspace<n>/last-image ; les anciennes
+# clés monitor0/last-image (sans workspace, venues de desktop-base) sont ignorées.
+props=$(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep -E '/workspace[0-9]+/last-image$' || true)
+for m in $(xrandr --listmonitors 2>/dev/null | awk 'NR>1 {print $NF}'); do
+    for w in 0 1 2 3; do
+        props="$props /backdrop/screen0/monitor$m/workspace$w/last-image"
     done
-fi
+done
+props=$(printf '%s\n' $props | sort -u)
 for p in $props; do
     X xfce4-desktop "$p" string "$WALLPAPER"
     X xfce4-desktop "$(dirname "$p")/image-style" int 5
