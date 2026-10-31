@@ -58,7 +58,7 @@ code
 nmap
 wireshark-qt
 tcpdump
-gnu-netcat
+openbsd-netcat
 radare2
 gdb
 ghidra

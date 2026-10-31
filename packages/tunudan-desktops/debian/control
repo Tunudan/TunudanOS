@@ -19,7 +19,7 @@ Package: tunudan-desktop-plasma
 Architecture: all
 Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, kde-plasma-desktop, sddm,
  qml6-module-qtquick-controls, qml6-module-qtquick-layouts, konsole, dolphin,
- kate, okular, gwenview, ark, spectacle, plasma-nm, plasma-pa, kde-config-gtk-style,
+ kate, okular, gwenview, ark, kde-spectacle, plasma-nm, plasma-pa, kde-config-gtk-style,
  kde-config-sddm
 Recommends: plasma-discover, plasma-discover-backend-flatpak, kde-config-flatpak,
  kwalletmanager, partitionmanager, kcalc

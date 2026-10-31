@@ -35,9 +35,10 @@ Points non testés ici, faute d'accès aux miroirs Debian et Arch :
   Debian 13 est incertaine (codium, jupyter-notebook, ghidra, nikto…) sont dans
   `Recommends` : leur absence ne bloque pas le build.
 - **niri** : vérifier la configuration avec `niri validate -c arch/expert/airootfs/etc/skel/.config/niri/config.kdl`.
-- **DankMaterialShell** : la commande `dms ipc call wallpaper set` du premier
-  lancement est à confirmer. Si elle change, il suffit d'adapter
-  `arch/expert/airootfs/usr/local/bin/tunudan-niri-session`.
+- **DankMaterialShell** : absent des dépôts officiels d'Arch (AUR seulement). L'ISO Expert
+  utilise donc Waybar aux couleurs Tunudan sous niri. Pour remettre DMS : compiler le paquet
+  AUR pendant `arch/build-expert.sh` dans un dépôt local ; `tunudan-niri-session` le
+  lance automatiquement s'il est installé (commande `dms ipc call wallpaper set` à confirmer).
 - **archiso** : le build part du profil `releng` installé avec archiso et y ajoute
   la couche Tunudan. Si archiso renomme un fichier, voir `arch/build-expert.sh`.
 - **Panneau Xfce** : le fichier `default.xml` ne s'applique qu'aux nouveaux comptes.

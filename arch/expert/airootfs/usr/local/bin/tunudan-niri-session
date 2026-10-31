@@ -1,5 +1,5 @@
 #!/bin/sh
-# Démarré par niri : coque graphique DankMaterialShell + fond Tunudan.
+# Démarré par niri : coque graphique (DankMaterialShell si installé, sinon Waybar) + fond Tunudan.
 WALL=/usr/share/backgrounds/tunudan/origami/origami-grue-sombre.png
 FLAG="${XDG_CONFIG_HOME:-$HOME/.config}/tunudan/niri-firstrun-done"
 mkdir -p "$(dirname "$FLAG")" "$HOME/Images/Captures"
@@ -15,8 +15,12 @@ if command -v dms >/dev/null 2>&1; then
         dms ipc call wallpaper set "$WALL" >/dev/null 2>&1 && touch "$FLAG"
     fi
 else
-    # Repli si DankMaterialShell n'est pas disponible
+    # DankMaterialShell n'est que dans l'AUR : Waybar aux couleurs Tunudan par défaut
     swaybg -m fill -i "$WALL" &
+    W="${XDG_CONFIG_HOME:-$HOME/.config}/waybar"
+    if command -v waybar >/dev/null && [ -f "$W/tunudan-niri.jsonc" ]; then
+        waybar -c "$W/tunudan-niri.jsonc" -s "$W/tunudan.css" &
+    fi
     command -v nm-applet >/dev/null && nm-applet --indicator &
 fi
 # Rappel de mises à jour
