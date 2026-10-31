@@ -1,8 +1,0 @@
-[Configuration]
-FontName=JetBrains Mono 12
-ColorForeground=#F5F1EA
-ColorBackground=#0D0D0D
-ColorCursor=#FF6B1A
-ColorBold=#FF9A5C
-ColorPalette=#1C1C1E;#ED553B;#5CB85C;#F6B43C;#4A90D9;#C2410C;#3FB8AF;#BDB7AE;#4A4A4E;#FF7A5C;#7ED37E;#FFD166;#7FB3FF;#FF6B1A;#6FE0D8;#F5F1EA
-MiscCursorBlinks=TRUE

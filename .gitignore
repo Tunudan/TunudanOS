@@ -1,0 +1,49 @@
+# Résultats de build (ISO, .deb, ISO Mint téléchargée, archives de thèmes)
+/out/
+*.iso
+*.iso.sha256
+*.iso.part*
+
+# Visuels générés par branding/generate.py et branding/wallpapers.py
+/branding/out/
+
+# Copiés dans le paquet tunudan-theme par scripts/prepare-branding.sh
+/packages/tunudan-theme/files/pack/
+/packages/tunudan-theme/files/logo/
+/packages/tunudan-theme/files/plymouth/tunudan/logo.png
+/packages/tunudan-theme/files/grub/tunudan/logo.png
+/packages/tunudan-theme/files/grub/tunudan/background.png
+/packages/tunudan-theme/files/calamares/tunudan/logo.png
+/packages/tunudan-theme/files/calamares/tunudan/welcome.png
+/packages/tunudan-theme/files/kde-wallpaper/Tunudan/contents/images/
+/packages/tunudan-theme/files/kde-wallpaper/Tunudan/contents/screenshot.png
+
+# Restes de dpkg-buildpackage (si lancé directement dans packages/)
+/packages/*/debian/.debhelper/
+/packages/*/debian/debhelper-build-stamp
+/packages/*/debian/files
+/packages/*/debian/*.substvars
+/packages/*/debian/*.debhelper.log
+/packages/*/debian/tunudan-*/
+*.deb
+*.buildinfo
+*.changes
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Fichiers temporaires des scripts de thèmes
+.build-*
+
+# QEMU / tests
+*.ppm
+*.qcow2
+
+# Éditeurs et système
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
