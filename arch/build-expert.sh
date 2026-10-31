@@ -62,6 +62,8 @@ cp "$ROOT"/branding/out/logo/*.png "$P/airootfs/usr/share/pixmaps/tunudan/"
 # 3. Paquets : releng + Tunudan (session live niri). tunudan-install installe ensuite
 #    les paquets communs + ceux du bureau choisi.
 grep -v '^\s*#' "$SRC/packages.extra" | grep -v '^\s*$' >> "$P/packages.x86_64"
+# grml-zsh-config (releng) fournit /etc/skel/.zshrc, qui entre en conflit avec celui de Tunudan
+sed -i '/^grml-zsh-config$/d' "$P/packages.x86_64"
 sort -u -o "$P/packages.x86_64" "$P/packages.x86_64"
 cp "$SRC/packages.base" "$P/airootfs/usr/share/tunudan/packages-base.txt"
 mkdir -p "$P/airootfs/usr/share/tunudan/desktops-arch"
