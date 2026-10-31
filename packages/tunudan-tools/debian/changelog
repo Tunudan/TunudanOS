@@ -1,3 +1,9 @@
+tunudan-tools (0.4.1) trixie; urgency=medium
+
+  * Reconstruit pour Tunudan OS 0.4.1.
+
+ -- Julien (Tunudan) <contact@tunudan.fr>  Sat, 31 Oct 2026 18:56:06 +0100
+
 tunudan-tools (0.4.0) trixie; urgency=medium
 
   * install-desktop / tunudan-desktop : bureau choisi à l'installation,
