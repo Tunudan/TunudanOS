@@ -1,3 +1,9 @@
+tunudan-theme (0.4.1) trixie; urgency=medium
+
+  * Xfce 4.20 : fond d'écran Tunudan appliqué sur les bonnes clés xfconf.
+
+ -- Julien (Tunudan) <contact@tunudan.fr>  Sat, 31 Oct 2026 18:56:06 +0100
+
 tunudan-theme (0.4.0) trixie; urgency=medium
 
   * Thème complet : ~290 icônes dessinées, curseurs, écrans de connexion

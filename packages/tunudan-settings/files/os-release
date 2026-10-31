@@ -1,7 +1,7 @@
-PRETTY_NAME="Tunudan OS 0.4.0 (base Debian 13 trixie)"
+PRETTY_NAME="Tunudan OS 0.4.1 (base Debian 13 trixie)"
 NAME="Tunudan OS"
-VERSION_ID="0.4.0"
-VERSION="0.4.0 (trixie)"
+VERSION_ID="0.4.1"
+VERSION="0.4.1 (trixie)"
 VERSION_CODENAME=trixie
 DEBIAN_VERSION_FULL=13
 ID=tunudan
