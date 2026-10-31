@@ -1,0 +1,24 @@
+#!/bin/sh
+# Démarré par niri : coque graphique DankMaterialShell + fond Tunudan.
+WALL=/usr/share/backgrounds/tunudan/origami/origami-grue-sombre.png
+FLAG="${XDG_CONFIG_HOME:-$HOME/.config}/tunudan/niri-firstrun-done"
+mkdir -p "$(dirname "$FLAG")" "$HOME/Images/Captures"
+
+# Clés et secrets (Wi-Fi, navigateur)
+command -v gnome-keyring-daemon >/dev/null && gnome-keyring-daemon --start --components=secrets >/dev/null 2>&1 &
+
+if command -v dms >/dev/null 2>&1; then
+    dms run &
+    if [ ! -f "$FLAG" ]; then
+        # Premier lancement : fond Tunudan, DMS en tire ses couleurs (orange)
+        sleep 4
+        dms ipc call wallpaper set "$WALL" >/dev/null 2>&1 && touch "$FLAG"
+    fi
+else
+    # Repli si DankMaterialShell n'est pas disponible
+    swaybg -m fill -i "$WALL" &
+    command -v nm-applet >/dev/null && nm-applet --indicator &
+fi
+# Rappel de mises à jour
+command -v tunudan-update >/dev/null && (sleep 900 && tunudan-update notify) &
+wait

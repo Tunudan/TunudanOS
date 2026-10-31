@@ -1,0 +1,6 @@
+[Unit]
+Description=Tunudan OS : rappel de mises à jour et de redémarrage
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/tunudan-update notify

@@ -1,0 +1,14 @@
+[Unit]
+Description=Tunudan OS Expert : utilisateur de la session live
+Before=greetd.service
+After=systemd-sysusers.service
+ConditionPathExists=!/home/tunudan
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/useradd -m -G wheel,video,input,audio,docker,libvirt,wireshark -s /usr/bin/zsh -c "Tunudan" tunudan
+ExecStart=/usr/bin/passwd -d tunudan
+ExecStart=/bin/sh -c 'mkdir -p /home/tunudan/.config/tunudan && touch /home/tunudan/.config/tunudan/welcome-done && chown -R tunudan: /home/tunudan/.config'
+
+[Install]
+WantedBy=multi-user.target

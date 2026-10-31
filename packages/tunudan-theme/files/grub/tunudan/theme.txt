@@ -1,0 +1,51 @@
+# Thème GRUB Tunudan OS
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#0D0D0D"
+terminal-font: "DejaVu Sans Regular 14"
+terminal-box: "terminal_box_*.png"
+
++ image {
+    left = 50%-64
+    top = 12%
+    width = 128
+    height = 128
+    file = "logo.png"
+}
+
++ label {
+    left = 0
+    top = 12%+140
+    width = 100%
+    align = "center"
+    text = "Tunudan OS"
+    color = "#F5F1EA"
+    font = "DejaVu Sans Bold 24"
+}
+
++ boot_menu {
+    left = 30%
+    top = 40%
+    width = 40%
+    height = 40%
+    item_font = "DejaVu Sans Regular 16"
+    item_color = "#BDB7AE"
+    selected_item_color = "#0D0D0D"
+    selected_item_pixmap_style = "select_*.png"
+    item_height = 36
+    item_padding = 12
+    item_spacing = 6
+    icon_width = 0
+    icon_height = 0
+}
+
++ label {
+    left = 0
+    top = 90%
+    width = 100%
+    align = "center"
+    id = "__timeout__"
+    text = "Démarrage automatique dans %d s"
+    color = "#FF9A5C"
+    font = "DejaVu Sans Regular 14"
+}

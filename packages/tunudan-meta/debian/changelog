@@ -1,0 +1,12 @@
+tunudan-meta (0.4.0) trixie; urgency=medium
+
+  * Débutant devient une édition Linux Mint (tunudan-edition-mint).
+  * Avancé ne dépend plus d'un bureau : il est choisi à l'installation.
+
+ -- Julien (Tunudan) <contact@tunudan.fr>  Fri, 30 Oct 2026 21:00:00 +0100
+
+tunudan-meta (0.1.0) trixie; urgency=medium
+
+  * Première version.
+
+ -- Julien (Tunudan) <contact@tunudan.fr>  Fri, 30 Oct 2026 03:00:00 +0100

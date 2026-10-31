@@ -1,0 +1,12 @@
+src/tunudan_common.py usr/lib/tunudan/
+src/tunudan-help usr/bin/
+src/tunudan-welcome usr/bin/
+src/tunudan-update usr/bin/
+src/tunudan-update-root usr/lib/tunudan/
+applications/*.desktop usr/share/applications/
+autostart/*.desktop etc/xdg/autostart/
+systemd/tunudan-update-notify.service usr/lib/systemd/user/
+systemd/tunudan-update-notify.timer usr/lib/systemd/user/
+polkit/fr.tunudan.update.policy usr/share/polkit-1/actions/
+src/install-desktop usr/lib/tunudan/
+src/tunudan-desktop usr/bin/

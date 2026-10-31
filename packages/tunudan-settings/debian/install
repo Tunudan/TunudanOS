@@ -1,0 +1,6 @@
+files/os-release usr/lib/tunudan/
+files/issue usr/lib/tunudan/
+files/52tunudan-unattended etc/apt/apt.conf.d/
+files/tunudan-prompt.sh etc/profile.d/
+files/tunudan.sources.disabled etc/apt/sources.list.d/
+files/tunudan.conf etc/tunudan/

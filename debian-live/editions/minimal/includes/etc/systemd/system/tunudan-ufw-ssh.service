@@ -1,0 +1,12 @@
+[Unit]
+Description=Tunudan OS : autorise SSH dans le pare-feu (une seule fois)
+After=ufw.service
+ConditionPathExists=!/var/lib/tunudan/ufw-ssh-done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/ufw allow OpenSSH
+ExecStartPost=/bin/sh -c 'mkdir -p /var/lib/tunudan && touch /var/lib/tunudan/ufw-ssh-done'
+
+[Install]
+WantedBy=multi-user.target

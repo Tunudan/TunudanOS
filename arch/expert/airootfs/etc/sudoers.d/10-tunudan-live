@@ -1,0 +1,2 @@
+# Session live uniquement : sudo sans mot de passe
+tunudan ALL=(ALL:ALL) NOPASSWD: ALL

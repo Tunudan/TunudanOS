@@ -1,0 +1,38 @@
+---
+# Branding Calamares — Tunudan OS
+componentName:  tunudan
+
+welcomeStyleCalamares:   true
+welcomeExpandingLogo:   true
+windowExpanding:    normal
+windowSize: 960px,640px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+
+strings:
+    productName:         "Tunudan OS"
+    shortProductName:    "Tunudan"
+    version:             "1.0"
+    shortVersion:        "1.0"
+    versionedName:       "Tunudan OS 1.0"
+    shortVersionedName:  "Tunudan 1.0"
+    bootloaderEntryName: "Tunudan OS"
+    productUrl:          "https://tunudan.fr/os"
+    supportUrl:          "https://tunudan.fr/aide"
+    knownIssuesUrl:      "https://tunudan.fr/os"
+    releaseNotesUrl:     "https://tunudan.fr/os"
+
+images:
+    productLogo:         "logo.png"
+    productIcon:         "logo.png"
+    productWelcome:      "welcome.png"
+
+slideshow:               "show.qml"
+slideshowAPI: 2
+
+style:
+   SidebarBackground:        "#0D0D0D"
+   SidebarText:              "#F5F1EA"
+   SidebarTextCurrent:       "#FF6B1A"
+   SidebarBackgroundCurrent: "#1C1C1E"

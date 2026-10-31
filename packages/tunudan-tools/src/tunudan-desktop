@@ -1,0 +1,40 @@
+#!/bin/sh
+# tunudan-desktop — choisir ou changer de bureau sur Tunudan OS.
+#
+#   tunudan-desktop                 liste les bureaux disponibles
+#   sudo tunudan-desktop <bureau>   installe ce bureau et en fait le bureau par défaut
+#   sudo tunudan-desktop <bureau> --keep   … sans retirer l'ancien bureau (Debian)
+set -eu
+TSV=/usr/share/tunudan/desktops/desktops.tsv
+if [ -f /etc/linuxmint/info ]; then OFFER="cinnamon mate xfce"
+else OFFER="gnome plasma xfce cinnamon mate lxqt budgie sway i3 hyprland"; fi
+current=$(cat /etc/tunudan/desktop 2>/dev/null || echo "?")
+
+if [ $# -eq 0 ]; then
+    echo "Bureau actuel : $current"
+    echo "Bureaux disponibles :"
+    for d in $OFFER; do
+        line=$(awk -F'\t' -v d="$d" '$1 == d {print $2 " — " $3}' "$TSV" 2>/dev/null)
+        printf '  %-9s %s\n' "$d" "${line:-$d}"
+    done
+    [ -f /var/lib/tunudan/desktop-pending ] && echo "En attente (Internet manquait à l'installation) : $(cat /var/lib/tunudan/desktop-pending)"
+    echo "Changer : sudo tunudan-desktop <bureau>"
+    exit 0
+fi
+DE=$1; shift
+case " $OFFER " in *" $DE "*) ;; *) echo "Bureau inconnu : $DE (choix : $OFFER)" >&2; exit 2 ;; esac
+[ "$(id -u)" = 0 ] || { echo "Il faut les droits administrateur : sudo tunudan-desktop $DE" >&2; exit 1; }
+extra=""
+[ "${1:-}" = "--keep" ] && extra="--keep-live"
+# Hors installation, le bureau « de l'ISO » est le bureau actuel
+mkdir -p /etc/tunudan
+[ "$current" != "?" ] && echo "$current" > /etc/tunudan/live-desktop
+echo "Installation de $DE… (journal : /var/log/tunudan-install-desktop.log)"
+# shellcheck disable=SC2086
+/usr/lib/tunudan/install-desktop "$DE" $extra
+if [ "$(cat /etc/tunudan/desktop 2>/dev/null)" = "$DE" ]; then
+    echo "Bureau $DE installé. Redémarrez l'ordinateur pour l'utiliser."
+else
+    tail -n 5 /var/log/tunudan-install-desktop.log >&2
+    exit 1
+fi

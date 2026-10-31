@@ -1,0 +1,16 @@
+Source: tunudan-settings
+Section: admin
+Priority: optional
+Maintainer: Julien (Tunudan) <contact@tunudan.fr>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: tunudan-settings
+Architecture: all
+Depends: ${misc:Depends}, unattended-upgrades, apt-listchanges, ufw, sudo, locales
+Recommends: fastfetch, tunudan-theme
+Description: Réglages système communs de Tunudan OS
+ Identité du système (os-release), mises à jour de sécurité automatiques,
+ pare-feu activé, français par défaut, invite de commande Tunudan et
+ dépôt apt Tunudan (désactivé tant qu'il n'est pas publié).

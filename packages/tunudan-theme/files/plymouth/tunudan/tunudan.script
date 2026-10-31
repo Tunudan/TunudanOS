@@ -1,0 +1,71 @@
+# Tunudan OS — écran de démarrage Plymouth
+Window.SetBackgroundTopColor(0.05, 0.05, 0.05);
+Window.SetBackgroundBottomColor(0.05, 0.05, 0.05);
+
+sw = Window.GetWidth();
+sh = Window.GetHeight();
+
+logo.image = Image("logo.png");
+size = Math.Min(sw, sh) * 0.22;
+logo.image = logo.image.Scale(size, size);
+logo.sprite = Sprite(logo.image);
+logo.sprite.SetX(sw / 2 - size / 2);
+logo.sprite.SetY(sh * 0.40 - size / 2);
+logo.sprite.SetOpacity(0);
+
+slogan.image = Image.Text("Apprendre. Coder. Avancer.", 0.96, 0.95, 0.92, 1, "Inter 16");
+slogan.sprite = Sprite(slogan.image);
+slogan.sprite.SetX(sw / 2 - slogan.image.GetWidth() / 2);
+slogan.sprite.SetY(sh * 0.40 + size / 2 + 24);
+slogan.sprite.SetOpacity(0);
+
+bar_w = Math.Min(sw * 0.3, 360);
+track.image = Image("track.png").Scale(bar_w, 4);
+track.sprite = Sprite(track.image);
+track.sprite.SetX(sw / 2 - bar_w / 2);
+track.sprite.SetY(sh * 0.78);
+bar.raw = Image("bar.png");
+bar.sprite = Sprite();
+bar.sprite.SetX(sw / 2 - bar_w / 2);
+bar.sprite.SetY(sh * 0.78);
+
+fade = 0;
+fun refresh_cb() {
+    if (fade < 1) {
+        fade += 0.025;
+        logo.sprite.SetOpacity(fade);
+        slogan.sprite.SetOpacity(fade);
+    }
+}
+Plymouth.SetRefreshFunction(refresh_cb);
+
+fun progress_cb(duration, progress) {
+    w = Math.Int(bar_w * progress);
+    if (w < 1) w = 1;
+    bar.sprite.SetImage(bar.raw.Scale(w, 4));
+}
+Plymouth.SetBootProgressFunction(progress_cb);
+
+# Saisie du mot de passe (disque chiffré)
+fun display_password_cb(prompt, bullets) {
+    txt = prompt + "  ";
+    for (i = 0; i < bullets; i++) txt += "•";
+    pw.image = Image.Text(txt, 1, 0.42, 0.10, 1, "Inter 14");
+    pw.sprite = Sprite(pw.image);
+    pw.sprite.SetX(sw / 2 - pw.image.GetWidth() / 2);
+    pw.sprite.SetY(sh * 0.70);
+}
+Plymouth.SetDisplayPasswordFunction(display_password_cb);
+
+fun display_normal_cb() {
+    pw.sprite = NULL;
+}
+Plymouth.SetDisplayNormalFunction(display_normal_cb);
+
+fun message_cb(text) {
+    msg.image = Image.Text(text, 0.7, 0.7, 0.7, 1, "Inter 11");
+    msg.sprite = Sprite(msg.image);
+    msg.sprite.SetX(sw / 2 - msg.image.GetWidth() / 2);
+    msg.sprite.SetY(sh * 0.90);
+}
+Plymouth.SetMessageFunction(message_cb);

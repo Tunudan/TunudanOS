@@ -1,0 +1,14 @@
+# KDE Plasma 6, connexion SDDM
+plasma-meta
+konsole
+dolphin
+kate
+okular
+gwenview
+ark
+spectacle
+kde-gtk-config
+sddm
+sddm-kcm
+qt6-declarative
+qt6-svg

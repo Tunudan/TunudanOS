@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Accueil Tunudan
+Comment=Assistant de bienvenue : taille du texte, cours, aide
+Exec=tunudan-welcome
+Icon=tunudan
+Terminal=false
+Categories=System;Settings;

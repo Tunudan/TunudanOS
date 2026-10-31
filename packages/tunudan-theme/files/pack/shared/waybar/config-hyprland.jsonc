@@ -1,0 +1,36 @@
+// Thème Tunudan — généré par themes/build.py, ne pas modifier à la main — Waybar pour hyprland
+{
+    "layer": "top",
+    "position": "top",
+    "height": 38,
+    "spacing": 2,
+    "modules-left": ["custom/tunudan", "hyprland/workspaces", "hyprland/window"],
+    "modules-center": ["clock"],
+    "modules-right": ["pulseaudio", "network", "battery", "tray"],
+    "custom/tunudan": {
+        "format": "◆",
+        "tooltip-format": "Tunudan — Apprendre. Coder. Avancer.\nClic : aide à distance",
+        "on-click": "tunudan-help"
+    },
+    "clock": {
+        "format": "{:%H:%M}",
+        "format-alt": "{:%A %d %B %Y}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+    "pulseaudio": {
+        "format": "♪ {volume} %",
+        "format-muted": "♪ muet",
+        "on-click": "pavucontrol"
+    },
+    "network": {
+        "format-wifi": "wifi {essid}",
+        "format-ethernet": "filaire",
+        "format-disconnected": "hors ligne",
+        "tooltip-format": "{ifname} {ipaddr}"
+    },
+    "battery": {
+        "states": { "warning": 25, "critical": 10 },
+        "format": "⚡ {capacity} %"
+    },
+    "tray": { "spacing": 8 }
+}

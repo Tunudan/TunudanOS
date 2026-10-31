@@ -1,0 +1,181 @@
+#!/usr/bin/python3
+"""tunudan-welcome — assistant du premier démarrage de Tunudan OS.
+
+Étapes : bienvenue, taille du texte, cours suivi, aide et liens.
+Lancé automatiquement une seule fois par utilisateur (autostart),
+relançable depuis le menu.
+"""
+import argparse
+import os
+import subprocess
+import sys
+
+sys.path.insert(0, "/usr/lib/tunudan")
+import tunudan_common as tc  # noqa: E402
+
+DONE = "welcome-done"
+COURS = [
+    ("aucun", "Je ne suis pas de cours pour l'instant"),
+    ("linux", "Linux, premiers pas"),
+    ("cyber", "Cybersécurité"),
+    ("dev", "Développement"),
+    ("ia", "Intelligence artificielle"),
+    ("seniors", "Accompagnement informatique (seniors)"),
+]
+TAILLES = [("normal", "Normale", 96, 1.0), ("grand", "Grande", 120, 1.25),
+           ("tres-grand", "Très grande", 144, 1.5)]
+
+
+def apply_text_size(dpi: int, factor: float) -> None:
+    d = tc.desktop()
+    if d == "xfce" and tc.which("xfconf-query"):
+        tc.run(["xfconf-query", "-c", "xsettings", "-p", "/Xft/DPI",
+                "-n", "-t", "int", "-s", str(dpi)])
+    elif d == "kde":
+        tool = "kwriteconfig6" if tc.which("kwriteconfig6") else "kwriteconfig5"
+        if tc.which(tool):
+            tc.run([tool, "--file", "kcmfonts", "--group", "General",
+                    "--key", "forceFontDPI", str(dpi)])
+    if tc.which("gsettings"):
+        tc.run(["gsettings", "set", "org.gnome.desktop.interface",
+                "text-scaling-factor", str(factor)])
+
+
+def live_session() -> bool:
+    """Session live (clé USB) : Debian live-boot ou casper (Linux Mint, Ubuntu)."""
+    try:
+        with open("/proc/cmdline", encoding="utf-8") as f:
+            cmdline = f.read().split()
+    except OSError:
+        cmdline = []
+    return ("boot=live" in cmdline or "boot=casper" in cmdline
+            or os.path.exists("/run/live/medium") or os.path.exists("/cdrom/casper"))
+
+
+def mark_done(cours: str = "aucun") -> None:
+    with open(tc.state_file(DONE), "w", encoding="utf-8") as f:
+        f.write(f"cours={cours}\n")
+
+
+def open_url(url: str) -> None:
+    subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL, start_new_session=True)
+
+
+def gui() -> int:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gdk, Gtk
+
+    tc.apply_css(Gtk, Gdk)
+    choice = {"taille": TAILLES[0], "cours": COURS[0][0]}
+
+    ass = Gtk.Assistant(title="Bienvenue dans Tunudan OS")
+    ass.set_default_size(720, 520)
+    ass.set_position(Gtk.WindowPosition.CENTER)
+    ass.set_icon_name("tunudan")
+
+    def page(widget, title, kind=Gtk.AssistantPageType.CONTENT):
+        ass.append_page(widget)
+        ass.set_page_title(widget, title)
+        ass.set_page_type(widget, kind)
+        ass.set_page_complete(widget, True)
+
+    def vbox():
+        return Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14, margin=28)
+
+    # 1. Bienvenue
+    b = vbox()
+    img = Gtk.Image.new_from_icon_name("tunudan", Gtk.IconSize.DIALOG)
+    img.set_pixel_size(128)
+    b.pack_start(img, False, False, 0)
+    t = Gtk.Label(label="Bienvenue dans Tunudan OS")
+    t.get_style_context().add_class("tunudan-title")
+    b.pack_start(t, False, False, 0)
+    s = Gtk.Label(label="Apprendre. Coder. Avancer.\n\nEn trois petites étapes, on règle "
+                        "votre ordinateur pour qu'il vous ressemble.")
+    s.set_justify(Gtk.Justification.CENTER)
+    s.get_style_context().add_class("tunudan-big")
+    b.pack_start(s, False, False, 0)
+    page(b, "Bienvenue", Gtk.AssistantPageType.INTRO)
+
+    # 2. Taille du texte
+    b = vbox()
+    lbl = Gtk.Label(label="Quelle taille de texte est la plus confortable ?")
+    lbl.get_style_context().add_class("tunudan-big")
+    b.pack_start(lbl, False, False, 0)
+    group = None
+    for item in TAILLES:
+        key, name, dpi, factor = item
+        rb = Gtk.RadioButton.new_with_label_from_widget(group, name)
+        group = group or rb
+        rb.get_child().set_markup(f"<span size='{int(12 * factor * 1000)}'>{name} — Aa</span>")
+
+        def on_toggle(button, it=item):
+            if button.get_active():
+                choice["taille"] = it
+                apply_text_size(it[2], it[3])
+        rb.connect("toggled", on_toggle)
+        b.pack_start(rb, False, False, 4)
+    page(b, "Taille du texte")
+
+    # 3. Cours
+    b = vbox()
+    lbl = Gtk.Label(label="Suivez-vous un cours Tunudan ?")
+    lbl.get_style_context().add_class("tunudan-big")
+    b.pack_start(lbl, False, False, 0)
+    group = None
+    for key, name in COURS:
+        rb = Gtk.RadioButton.new_with_label_from_widget(group, name)
+        group = group or rb
+        rb.connect("toggled", lambda w, k=key: w.get_active() and choice.update(cours=k))
+        b.pack_start(rb, False, False, 2)
+    page(b, "Votre cours")
+
+    # 4. Aide et liens
+    b = vbox()
+    lbl = Gtk.Label(label="Vous êtes prêt !")
+    lbl.get_style_context().add_class("tunudan-title")
+    b.pack_start(lbl, False, False, 0)
+    info = Gtk.Label(label="Le bouton « Appeler Tunudan » du menu vous met en relation avec "
+                           "un formateur.\nLes mises à jour de sécurité se font toutes seules.")
+    info.set_justify(Gtk.Justification.CENTER)
+    b.pack_start(info, False, False, 0)
+    for text, url in (("Découvrir les cours sur tunudan.fr", "https://tunudan.fr"),
+                      ("Guide de démarrage", "https://tunudan.fr/os/guide")):
+        btn = Gtk.Button(label=text)
+        btn.connect("clicked", lambda _b, u=url: open_url(u))
+        b.pack_start(btn, False, False, 0)
+    page(b, "C'est parti", Gtk.AssistantPageType.SUMMARY)
+
+    def finish(*_):
+        mark_done(choice["cours"])
+        Gtk.main_quit()
+
+    ass.connect("close", finish)
+    ass.connect("cancel", finish)
+    ass.connect("delete-event", lambda *_: (finish(), False)[1])
+    ass.show_all()
+    Gtk.main()
+    return 0
+
+
+def main() -> int:
+    p = argparse.ArgumentParser(description="Assistant d'accueil Tunudan OS")
+    p.add_argument("--autostart", action="store_true",
+                   help="ne s'ouvre que si l'assistant n'a jamais été terminé")
+    a = p.parse_args()
+    if a.autostart and os.path.exists(tc.state_file(DONE)):
+        return 0
+    # Pas d'accueil graphique dans la session live ni sans écran
+    if a.autostart and live_session():
+        return 0
+    if not tc.gtk_available():
+        print("Bienvenue dans Tunudan OS ! Tapez « tunudan-help » si vous avez besoin d'aide.")
+        mark_done()
+        return 0
+    return gui()
+
+
+if __name__ == "__main__":
+    sys.exit(main())

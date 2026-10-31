@@ -1,0 +1,13 @@
+#!/bin/sh
+# Minimal : console en français, police lisible, SSH sécurisé.
+set -e
+sed -i 's/^FONTFACE=.*/FONTFACE="Terminus"/; s/^FONTSIZE=.*/FONTSIZE="16x32"/' /etc/default/console-setup 2>/dev/null || true
+if [ -d /etc/ssh/sshd_config.d ]; then
+    cat > /etc/ssh/sshd_config.d/50-tunudan.conf <<'CONF'
+# Tunudan : pas de connexion root par SSH, clés recommandées
+PermitRootLogin no
+MaxAuthTries 4
+CONF
+fi
+# Autorise SSH dans le pare-feu au premier démarrage
+systemctl enable tunudan-ufw-ssh.service 2>/dev/null || true

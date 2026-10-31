@@ -1,0 +1,17 @@
+# Hyprland, connexion SDDM
+hyprland
+hyprpaper
+hypridle
+hyprlock
+hyprpolkitagent
+xdg-desktop-portal-hyprland
+waybar
+fuzzel
+mako
+grim
+slurp
+pavucontrol
+sddm
+qt6-declarative
+qt6-svg
+ttf-font-awesome

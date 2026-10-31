@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+    for f in /usr/lib/os-release /etc/issue; do
+        if dpkg-divert --list "$f" | grep -q tunudan-settings; then
+            rm -f "$f"
+            dpkg-divert --package tunudan-settings --remove --rename \
+                --divert "$f.debian" "$f"
+        fi
+    done
+fi
+#DEBHELPER#
+exit 0

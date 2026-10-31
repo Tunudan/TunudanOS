@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+if [ "$1" = "configure" ]; then
+    if dpkg-divert --list /usr/lib/os-release | grep -q tunudan-settings; then
+        ln -sf /usr/lib/tunudan/os-release /usr/lib/os-release
+    fi
+    cp -f /usr/lib/tunudan/issue /etc/issue
+    # Pare-feu : actif au prochain démarrage (pas de « ufw enable » dans un chroot)
+    if [ -f /etc/ufw/ufw.conf ]; then
+        sed -i 's/^ENABLED=.*/ENABLED=yes/' /etc/ufw/ufw.conf
+    fi
+    # Linux Mint : mises à jour automatiques de mintupdate (équivalent d'unattended-upgrades)
+    if [ -f /etc/linuxmint/info ] && [ -d /var/lib/linuxmint ]; then
+        touch /var/lib/linuxmint/mintupdate-automatic-upgrades-enabled
+        [ -f /etc/systemd/system/timers.target.wants/mintupdate-automation-upgrade.timer ] || \
+            ln -sf /lib/systemd/system/mintupdate-automation-upgrade.timer \
+                /etc/systemd/system/timers.target.wants/mintupdate-automation-upgrade.timer 2>/dev/null || true
+    fi
+    # Français par défaut si aucune langue n'est choisie
+    if ! grep -q '^fr_FR.UTF-8' /etc/locale.gen 2>/dev/null; then
+        echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
+        locale-gen >/dev/null 2>&1 || true
+    fi
+    [ -f /etc/default/locale ] || echo 'LANG=fr_FR.UTF-8' > /etc/default/locale
+fi
+#DEBHELPER#
+exit 0

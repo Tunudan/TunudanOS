@@ -1,0 +1,198 @@
+#!/bin/sh
+# Installe le bureau choisi pendant l'installation de Tunudan OS (ou plus tard).
+#
+#   install-desktop <bureau> [--target /target] [--distro debian|mint] [--keep-live]
+#
+#   Debian (édition Avancé) : gnome plasma xfce cinnamon mate lxqt budgie sway i3 hyprland
+#   Linux Mint (Débutant)   : cinnamon mate xfce
+#
+# Appelé par Calamares (Debian) et par Ubiquity (Mint) une fois le système copié,
+# avec --target pointant sur le système installé. Sans --target : système en cours.
+# Internet est nécessaire, sauf pour le bureau déjà présent sur l'ISO.
+# Ne fait jamais échouer l'installation : en cas de problème, le bureau de l'ISO
+# est gardé et « sudo tunudan-desktop <bureau> » permet de réessayer plus tard.
+set -u
+DE=""
+T=/
+DISTRO=""
+KEEP=0
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --target) T=$2; shift ;;
+        --distro) DISTRO=$2; shift ;;
+        --keep-live) KEEP=1 ;;
+        -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
+        -*) echo "Option inconnue : $1" >&2; exit 2 ;;
+        *) DE=$1 ;;
+    esac
+    shift
+done
+T=${T%/}; [ -n "$T" ] || T=/
+LOG="$T/var/log/tunudan-install-desktop.log"
+mkdir -p "$T/var/log" "$T/var/lib/tunudan"
+exec >>"$LOG" 2>&1
+echo "=== $(date '+%F %T') install-desktop $DE (cible $T)"
+
+if [ -z "$DISTRO" ]; then
+    if [ -f "$T/etc/linuxmint/info" ]; then DISTRO=mint
+    elif [ -f "$T/etc/arch-release" ]; then DISTRO=arch
+    else DISTRO=debian; fi
+fi
+
+# ------------------------------------------------------------------ bureaux
+# bureau | paquets | gestionnaire de connexion | session par défaut
+case "$DISTRO:$DE" in
+    debian:gnome)    PKGS=tunudan-desktop-gnome;    DM=gdm3;    SESSION=gnome ;;
+    debian:plasma)   PKGS=tunudan-desktop-plasma;   DM=sddm;    SESSION=plasma ;;
+    debian:xfce)     PKGS=tunudan-desktop-xfce;     DM=lightdm; SESSION=xfce ;;
+    debian:cinnamon) PKGS=tunudan-desktop-cinnamon; DM=lightdm; SESSION=cinnamon ;;
+    debian:mate)     PKGS=tunudan-desktop-mate;     DM=lightdm; SESSION=mate ;;
+    debian:lxqt)     PKGS=tunudan-desktop-lxqt;     DM=sddm;    SESSION=lxqt ;;
+    debian:budgie)   PKGS=tunudan-desktop-budgie;   DM=lightdm; SESSION=budgie-desktop ;;
+    debian:sway)     PKGS=tunudan-desktop-sway;     DM=sddm;    SESSION=sway ;;
+    debian:i3)       PKGS=tunudan-desktop-i3;       DM=sddm;    SESSION=i3 ;;
+    debian:hyprland) PKGS=tunudan-desktop-hyprland; DM=sddm;    SESSION=hyprland ;;
+    mint:cinnamon)   PKGS=mint-meta-cinnamon;       DM=lightdm; SESSION=cinnamon ;;
+    mint:mate)       PKGS=mint-meta-mate;           DM=lightdm; SESSION=mate ;;
+    mint:xfce)       PKGS=mint-meta-xfce;           DM=lightdm; SESSION=xfce ;;
+    *) echo "Bureau inconnu pour $DISTRO : $DE"; exit 0 ;;
+esac
+# Bureau livré sur l'ISO (rien à télécharger)
+LIVE_DE=xfce; [ "$DISTRO" = mint ] && LIVE_DE=cinnamon
+[ -f "$T/etc/tunudan/live-desktop" ] && LIVE_DE=$(cat "$T/etc/tunudan/live-desktop")
+
+# ------------------------------------------------------------------ chroot
+MOUNTED=""
+in_t() {
+    if [ "$T" = / ]; then "$@"; else chroot "$T" "$@"; fi
+}
+prepare_chroot() {
+    [ "$T" = / ] && return 0
+    for d in dev dev/pts proc sys run; do
+        mkdir -p "$T/$d"
+        if ! mountpoint -q "$T/$d"; then
+            mount --bind "/$d" "$T/$d" && MOUNTED="$T/$d $MOUNTED"
+        fi
+    done
+    # DNS : le système copié n'a pas encore de resolv.conf utilisable
+    if [ -e "$T/etc/resolv.conf" ] || [ -L "$T/etc/resolv.conf" ]; then
+        mv "$T/etc/resolv.conf" "$T/etc/resolv.conf.tunudan"
+    fi
+    cat /etc/resolv.conf > "$T/etc/resolv.conf" 2>/dev/null || echo "nameserver 1.1.1.1" > "$T/etc/resolv.conf"
+    # Aucun service ne doit démarrer dans le chroot
+    printf '#!/bin/sh\nexit 101\n' > "$T/usr/sbin/policy-rc.d"
+    chmod 755 "$T/usr/sbin/policy-rc.d"
+}
+cleanup_chroot() {
+    [ "$T" = / ] && return 0
+    rm -f "$T/usr/sbin/policy-rc.d" "$T/etc/resolv.conf"
+    [ -e "$T/etc/resolv.conf.tunudan" ] || [ -L "$T/etc/resolv.conf.tunudan" ] && mv "$T/etc/resolv.conf.tunudan" "$T/etc/resolv.conf"
+    for m in $MOUNTED; do umount -l "$m" 2>/dev/null || true; done
+}
+trap cleanup_chroot EXIT
+
+APT="env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+
+fail() {
+    echo "ÉCHEC : $*"
+    echo "$DE" > "$T/var/lib/tunudan/desktop-pending"
+    echo "Le bureau de l'ISO ($LIVE_DE) est conservé. Pour réessayer : sudo tunudan-desktop $DE"
+    exit 0
+}
+
+prepare_chroot
+
+# ------------------------------------------------------------------ paquets
+if [ "$DE" != "$LIVE_DE" ]; then
+    APT_EXTRA=""
+    if [ "$DISTRO:$DE" = debian:hyprland ]; then
+        # Hyprland n'est disponible sous Debian 13 que dans trixie-backports
+        S="$T/etc/apt/sources.list.d/trixie-backports.sources"
+        if [ ! -f "$S" ]; then
+            printf 'Types: deb\nURIs: http://deb.debian.org/debian\nSuites: trixie-backports\nComponents: main contrib non-free-firmware\nSigned-By: /usr/share/keyrings/debian-archive-keyring.gpg\n' > "$S"
+        fi
+        APT_EXTRA="-t trixie-backports"
+    fi
+    in_t $APT update || fail "apt update (pas d'Internet ?)"
+    debconf_dm=$DM
+    echo "shared/default-x-display-manager select $debconf_dm" | in_t debconf-set-selections 2>/dev/null || true
+    # shellcheck disable=SC2086
+    in_t $APT $APT_EXTRA install $PKGS || fail "installation de $PKGS"
+fi
+in_t apt-mark manual $PKGS >/dev/null 2>&1 || true
+
+# Debian : on retire le bureau Xfce de l'ISO s'il n'a pas été choisi
+if [ "$DISTRO" = debian ] && [ "$DE" != "$LIVE_DE" ] && [ "$KEEP" = 0 ]; then
+    live_meta="tunudan-desktop-$LIVE_DE"
+    deps=$(in_t apt-cache depends --installed "$live_meta" 2>/dev/null | awk '/Depends:/ {print $2}' | tr -d '<>')
+    # shellcheck disable=SC2086
+    in_t apt-mark auto "$live_meta" $deps lightdm lightdm-gtk-greeter >/dev/null 2>&1 || true
+    in_t $APT autoremove --purge || echo "AVERTISSEMENT : nettoyage du bureau de l'ISO incomplet"
+fi
+
+# ------------------------------------------------------------------ connexion
+case "$DM" in
+    gdm3) dm_bin=/usr/sbin/gdm3; dm_unit=gdm.service ;;
+    sddm) dm_bin=/usr/bin/sddm; dm_unit=sddm.service ;;
+    *)    dm_bin=/usr/sbin/lightdm; dm_unit=lightdm.service ;;
+esac
+echo "$dm_bin" > "$T/etc/X11/default-display-manager" 2>/dev/null || true
+for u in /lib/systemd/system/$dm_unit /usr/lib/systemd/system/$dm_unit; do
+    if [ -f "$T$u" ]; then ln -sf "$u" "$T/etc/systemd/system/display-manager.service"; break; fi
+done
+
+# Fichier de session (X11 ou Wayland) réellement présent
+sess_file=""
+for f in "$T/usr/share/wayland-sessions/$SESSION.desktop" "$T/usr/share/xsessions/$SESSION.desktop"; do
+    [ -f "$f" ] && { sess_file=${f#"$T"}; break; }
+done
+if [ -z "$sess_file" ] && [ "$SESSION" = hyprland ]; then
+    f=$(ls "$T"/usr/share/wayland-sessions/hyprland*.desktop 2>/dev/null | head -n1)
+    [ -n "$f" ] && { sess_file=${f#"$T"}; SESSION=$(basename "$f" .desktop); }
+fi
+[ -n "$sess_file" ] || echo "AVERTISSEMENT : fichier de session $SESSION introuvable"
+
+case "$DM" in
+    lightdm)
+        mkdir -p "$T/etc/lightdm/lightdm.conf.d"
+        printf '[Seat:*]\nuser-session=%s\n' "$SESSION" > "$T/etc/lightdm/lightdm.conf.d/80-tunudan-session.conf"
+        if [ "$DISTRO" = mint ]; then
+            # Mint : slick-greeter (déjà thémé par tunudan-theme)
+            printf 'greeter-session=slick-greeter\n' >> "$T/etc/lightdm/lightdm.conf.d/80-tunudan-session.conf"
+        else
+            printf 'greeter-session=lightdm-gtk-greeter\n' >> "$T/etc/lightdm/lightdm.conf.d/80-tunudan-session.conf"
+        fi ;;
+    sddm)
+        mkdir -p "$T/var/lib/sddm"
+        [ -n "$sess_file" ] && printf '[Last]\nSession=%s\n' "$sess_file" > "$T/var/lib/sddm/state.conf"
+        in_t chown sddm:sddm /var/lib/sddm/state.conf 2>/dev/null || true ;;
+esac
+# Session par défaut des comptes déjà créés (AccountsService, lu par GDM et LightDM)
+for h in "$T"/home/*; do
+    [ -d "$h" ] || continue
+    user=$(basename "$h")
+    in_t id "$user" >/dev/null 2>&1 || continue
+    mkdir -p "$T/var/lib/AccountsService/users"
+    a="$T/var/lib/AccountsService/users/$user"
+    if [ -f "$a" ]; then
+        sed -i '/^Session=/d; /^XSession=/d' "$a"
+        grep -q '^\[User\]' "$a" || printf '[User]\n' >> "$a"
+        sed -i "s/^\[User\]/[User]\nSession=$SESSION\nXSession=$SESSION/" "$a"
+    else
+        printf '[User]\nSession=%s\nXSession=%s\nSystemAccount=false\n' "$SESSION" "$SESSION" > "$a"
+    fi
+    printf '[Desktop]\nSession=%s\n' "$SESSION" > "$h/.dmrc"
+    in_t chown "$user:" "/home/$user/.dmrc" 2>/dev/null || true
+done
+
+# Thème : schémas, curseur, écran de connexion du nouveau bureau
+in_t /usr/share/tunudan/themes/install-system.sh --activate-only --distro "$DISTRO" || true
+
+# Le dépôt local de l'ISO (/opt/tunudan/repo, métapaquets des bureaux) reste en place :
+# il sert à changer de bureau plus tard avec « sudo tunudan-desktop <bureau> ».
+rm -f "$T/var/lib/tunudan/desktop-pending"
+# Linux Mint : l'écran de choix du bureau ne sert que sur la clé
+[ "$DISTRO" = mint ] && [ "$T" != / ] && rm -rf "$T/usr/lib/tunudan/live"
+echo "$DE" > "$T/etc/tunudan/desktop"
+echo "=== Bureau $DE installé ($DM, session $SESSION)"
+exit 0

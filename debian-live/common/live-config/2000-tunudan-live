@@ -1,0 +1,21 @@
+#!/bin/sh
+# Exécuté au démarrage de la session LIVE uniquement (live-config).
+# Pose l'icône « Installer Tunudan OS » sur le bureau de l'utilisateur live.
+LIVE_USERNAME="${LIVE_USERNAME:-$(sed -n 's/.*username=\([^ ]*\).*/\1/p' /proc/cmdline)}"
+LIVE_USERNAME="${LIVE_USERNAME:-user}"
+HOME_DIR="/home/$LIVE_USERNAME"
+[ -d "$HOME_DIR" ] || exit 0
+for f in /usr/share/applications/install-debian.desktop /usr/share/applications/calamares.desktop; do
+    if [ -f "$f" ]; then
+        mkdir -p "$HOME_DIR/Bureau" "$HOME_DIR/Desktop"
+        cp "$f" "$HOME_DIR/Bureau/installer-tunudan.desktop"
+        cp "$f" "$HOME_DIR/Desktop/installer-tunudan.desktop"
+        chmod +x "$HOME_DIR/Bureau/installer-tunudan.desktop" "$HOME_DIR/Desktop/installer-tunudan.desktop"
+        chown -R "$LIVE_USERNAME:" "$HOME_DIR/Bureau" "$HOME_DIR/Desktop"
+        break
+    fi
+done
+# Pas d'assistant d'accueil dans la session live
+mkdir -p "$HOME_DIR/.config/tunudan"
+touch "$HOME_DIR/.config/tunudan/welcome-done"
+chown -R "$LIVE_USERNAME:" "$HOME_DIR/.config"

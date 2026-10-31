@@ -1,0 +1,10 @@
+# niri : défilement horizontal + DankMaterialShell, connexion greetd/tuigreet
+niri
+xwayland-satellite
+dms-shell-niri
+greetd
+greetd-tuigreet
+xdg-desktop-portal-gnome
+grim
+slurp
+swaybg

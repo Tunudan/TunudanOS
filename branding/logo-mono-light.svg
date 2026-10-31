@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>Tunudan — grue origami</title>
+  <polygon points="92,150 40,118 106,169" fill="#FFFFFF"/>
+  <polygon points="164,150 206,96 150,169" fill="#F5F1EA"/>
+  <polygon points="206,96 234,94 198,110" fill="#FFFFFF"/>
+  <polygon points="128,108 92,150 30,56" fill="#F5F1EA"/>
+  <polygon points="128,108 164,150 226,56" fill="#BDB7AE"/>
+  <polygon points="128,108 92,150 118,160" fill="#FFFFFF"/>
+  <polygon points="128,108 164,150 138,160" fill="#D6D0C7"/>
+  <polygon points="128,108 118,160 138,160" fill="#FFFFFF"/>
+  <polygon points="92,150 128,204 118,160" fill="#BDB7AE"/>
+  <polygon points="164,150 128,204 138,160" fill="#FFFFFF"/>
+  <polygon points="118,160 138,160 128,204" fill="#F5F1EA"/>
+</svg>

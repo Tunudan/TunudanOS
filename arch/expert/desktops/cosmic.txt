@@ -1,0 +1,2 @@
+# COSMIC (System76), connexion cosmic-greeter
+cosmic

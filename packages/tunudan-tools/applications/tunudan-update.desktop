@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Mises à jour Tunudan
+Comment=Vérifier et installer les mises à jour
+Exec=tunudan-update
+Icon=system-software-update
+Terminal=false
+Categories=System;Settings;

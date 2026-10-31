@@ -1,0 +1,172 @@
+#!/bin/bash
+# Installe Tunudan OS Expert sur le disque.
+# 0) choix du bureau (12 au choix, niri par défaut) ;
+# 1) archinstall (guidé) installe une Arch de base ;
+# 2) ce script ajoute la couche Tunudan : paquets communs, bureau choisi, thème complet,
+#    écran de connexion, outils Tunudan.
+set -euo pipefail
+O=$'\e[1;38;5;208m'; R=$'\e[0m'
+SHARE=/usr/share/tunudan
+BASE=$SHARE/packages-base.txt
+DESKTOPS=$SHARE/desktops-arch
+TSV=$SHARE/desktops/desktops.tsv
+THEMES_SRC=$SHARE/themes-src
+
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+
+# ------------------------------------------------------------------ 0. bureau
+ORDER="niri hyprland sway i3 gnome plasma cosmic xfce cinnamon mate lxqt budgie"
+choose_desktop() {
+    local items=() d name desc
+    for d in $ORDER; do
+        name=$(awk -F'\t' -v d="$d" '$1 == d {print $2}' "$TSV")
+        desc=$(awk -F'\t' -v d="$d" '$1 == d {print $3}' "$TSV" | cut -c1-58)
+        items+=("$d" "${name:-$d} — ${desc}")
+    done
+    if command -v whiptail >/dev/null 2>&1; then
+        export NEWT_COLORS='root=,black window=,black border=brightred,black title=brightred,black
+textbox=white,black button=black,brightred actbutton=black,brightred compactbutton=white,black
+listbox=white,black actlistbox=black,brightred actsellistbox=black,brightred sellistbox=brightred,black'
+        whiptail --title " Tunudan OS Expert " --default-item niri --notags \
+            --menu "\nChoisissez votre bureau (vous pourrez en ajouter d'autres plus tard) :" \
+            22 86 12 "${items[@]}" 3>&1 1>&2 2>&3
+    else
+        echo "Bureaux : $ORDER" >&2
+        read -rp "Votre choix [niri] : " d
+        echo "${d:-niri}"
+    fi
+}
+DE="${1:-}"
+[ -n "$DE" ] || DE=$(choose_desktop) || { echo "Installation annulée."; exit 1; }
+[ -f "$DESKTOPS/$DE.txt" ] || { echo "Bureau inconnu : $DE"; exit 2; }
+
+case "$DE" in
+    gnome) DM=gdm; SESSION=gnome ;;
+    plasma) DM=sddm; SESSION=plasma ;;
+    lxqt) DM=sddm; SESSION=lxqt ;;
+    hyprland) DM=sddm; SESSION=hyprland ;;
+    sway) DM=sddm; SESSION=sway ;;
+    i3) DM=sddm; SESSION=i3 ;;
+    xfce) DM=lightdm; SESSION=xfce ;;
+    cinnamon) DM=lightdm; SESSION=cinnamon ;;
+    mate) DM=lightdm; SESSION=mate ;;
+    budgie) DM=lightdm; SESSION=budgie-desktop ;;
+    cosmic) DM=cosmic-greeter; SESSION=cosmic ;;
+    niri) DM=greetd; SESSION=niri ;;
+esac
+
+cat <<TXT
+
+${O}Installation de Tunudan OS Expert — bureau : $DE${R}
+
+Étape 1/2 : archinstall va s'ouvrir. Choix conseillés :
+  • Langue / clavier : fr_FR.UTF-8 / fr
+  • Disque : effacement automatique, ext4 ou btrfs
+  • Profil : « Minimal » (Tunudan ajoute le bureau ensuite)
+  • Audio : pipewire — Réseau : NetworkManager
+  • Créez votre utilisateur et cochez « superutilisateur (sudo) »
+À la fin, répondez « Non » à la question du chroot.
+
+TXT
+read -rp "Appuyez sur Entrée pour lancer archinstall… "
+archinstall || { echo "archinstall a échoué ou a été annulé."; exit 1; }
+
+# ------------------------------------------------------------------ système installé
+TARGET=""
+for m in /mnt/archinstall /mnt; do
+    if [ -f "$m/etc/arch-release" ]; then TARGET=$m; break; fi
+done
+if [ -z "$TARGET" ]; then
+    echo; lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINTS; echo
+    read -rp "Partition racine installée (ex. /dev/nvme0n1p2) : " ROOTDEV
+    TARGET=/mnt/tunudan
+    mkdir -p "$TARGET"
+    if [ "$(lsblk -no FSTYPE "$ROOTDEV")" = "btrfs" ]; then
+        mount -o subvol=@ "$ROOTDEV" "$TARGET" 2>/dev/null || mount "$ROOTDEV" "$TARGET"
+    else
+        mount "$ROOTDEV" "$TARGET"
+    fi
+    [ -f "$TARGET/etc/arch-release" ] || { echo "Pas de système Arch sur $ROOTDEV."; exit 1; }
+    if [ "$(lsblk -no FSTYPE "$ROOTDEV")" = "btrfs" ] && [ -z "$(ls -A "$TARGET/home" 2>/dev/null)" ]; then
+        mount -o subvol=@home "$ROOTDEV" "$TARGET/home" 2>/dev/null || true
+    fi
+fi
+echo "${O}Étape 2/2 : couche Tunudan et bureau $DE sur $TARGET${R}"
+
+# ------------------------------------------------------------------ paquets
+grep -hv '^\s*#' "$BASE" "$DESKTOPS/$DE.txt" | grep -v '^\s*$' | sort -u > /tmp/tunudan-pkgs
+arch-chroot "$TARGET" pacman -Sy --needed --noconfirm - < /tmp/tunudan-pkgs
+
+# ------------------------------------------------------------------ thème complet
+sh "$THEMES_SRC/install-system.sh" --files-only --distro arch --destdir "$TARGET"
+arch-chroot "$TARGET" /usr/share/tunudan/themes/install-system.sh --activate-only --distro arch
+
+# ------------------------------------------------------------------ outils Tunudan
+mkdir -p "$TARGET/usr/lib/tunudan" "$TARGET/etc/tunudan" "$TARGET/usr/share/tunudan"
+cp -a "$SHARE/fastfetch" "$TARGET/usr/share/tunudan/" 2>/dev/null || true
+cp -a /usr/lib/tunudan/. "$TARGET/usr/lib/tunudan/"
+cp -a /etc/tunudan/. "$TARGET/etc/tunudan/"
+cp -a /usr/local/bin/tunudan-help /usr/local/bin/tunudan-update /usr/local/bin/tunudan-welcome \
+      /usr/local/bin/tunudan-niri-session "$TARGET/usr/local/bin/"
+cp -a /usr/share/applications/tunudan-*.desktop "$TARGET/usr/share/applications/"
+for f in /usr/share/polkit-1/actions/fr.tunudan.update.policy \
+         /usr/lib/systemd/user/tunudan-update-notify.service \
+         /usr/lib/systemd/user/tunudan-update-notify.timer \
+         /etc/xdg/autostart/tunudan-welcome.desktop; do
+    [ -f "$f" ] && install -Dm644 "$f" "$TARGET$f"
+done
+# Fichiers personnels propres à l'édition Expert (zsh, starship, kitty, niri)
+cp -a /etc/skel/.zshrc "$TARGET/etc/skel/" 2>/dev/null || true
+mkdir -p "$TARGET/etc/skel/.config"
+for c in starship.toml kitty niri; do
+    [ -e "/etc/skel/.config/$c" ] && cp -a "/etc/skel/.config/$c" "$TARGET/etc/skel/.config/"
+done
+
+# ------------------------------------------------------------------ écran de connexion
+for dm in gdm sddm lightdm greetd cosmic-greeter; do
+    arch-chroot "$TARGET" systemctl disable "$dm" >/dev/null 2>&1 || true
+done
+case "$DM" in
+    greetd)
+        # Écran de connexion texte, sans connexion automatique
+        sed '/^\[initial_session\]/,$d; /Session live/d' /etc/greetd/config.toml > "$TARGET/etc/greetd/config.toml" ;;
+    lightdm)
+        mkdir -p "$TARGET/etc/lightdm/lightdm.conf.d"
+        printf '[Seat:*]\ngreeter-session=lightdm-gtk-greeter\nuser-session=%s\n' "$SESSION" \
+            > "$TARGET/etc/lightdm/lightdm.conf.d/80-tunudan-session.conf" ;;
+    sddm)
+        sess=""
+        for f in "$TARGET/usr/share/wayland-sessions/$SESSION.desktop" "$TARGET/usr/share/xsessions/$SESSION.desktop"; do
+            [ -f "$f" ] && { sess=${f#"$TARGET"}; break; }
+        done
+        if [ -n "$sess" ]; then
+            mkdir -p "$TARGET/var/lib/sddm"
+            printf '[Last]\nSession=%s\n' "$sess" > "$TARGET/var/lib/sddm/state.conf"
+            arch-chroot "$TARGET" chown sddm:sddm /var/lib/sddm/state.conf 2>/dev/null || true
+        fi ;;
+esac
+arch-chroot "$TARGET" systemctl enable "$DM"
+
+# ------------------------------------------------------------------ comptes déjà créés
+for home in "$TARGET"/home/*; do
+    [ -d "$home" ] || continue
+    user=$(basename "$home")
+    arch-chroot "$TARGET" id "$user" >/dev/null 2>&1 || continue
+    cp -an "$TARGET/etc/skel/." "$home/"
+    arch-chroot "$TARGET" chown -R "$user:" "/home/$user"
+    arch-chroot "$TARGET" chsh -s /usr/bin/zsh "$user" || true
+    for g in docker libvirt wireshark video input; do
+        arch-chroot "$TARGET" gpasswd -a "$user" "$g" >/dev/null 2>&1 || true
+    done
+    mkdir -p "$TARGET/var/lib/AccountsService/users"
+    printf '[User]\nSession=%s\nXSession=%s\nSystemAccount=false\n' "$SESSION" "$SESSION" \
+        > "$TARGET/var/lib/AccountsService/users/$user"
+done
+
+arch-chroot "$TARGET" systemctl enable NetworkManager bluetooth docker libvirtd || true
+arch-chroot "$TARGET" systemctl --global enable tunudan-update-notify.timer || true
+echo expert > "$TARGET/etc/tunudan/edition"
+echo "$DE" > "$TARGET/etc/tunudan/desktop"
+
+echo
+echo "${O}Tunudan OS Expert est installé (bureau : $DE).${R} Retirez la clé USB et redémarrez."

@@ -1,0 +1,6 @@
+#!/bin/sh
+# Note l'édition et la version dans la configuration Tunudan.
+set -e
+sed -i 's/^nom = .*/nom = @EDITION@/' /etc/tunudan/tunudan.conf
+sed -i 's/^VERSION_ID=.*/VERSION_ID="@VERSION@"/' /usr/lib/tunudan/os-release
+echo "@EDITION@" > /etc/tunudan/edition

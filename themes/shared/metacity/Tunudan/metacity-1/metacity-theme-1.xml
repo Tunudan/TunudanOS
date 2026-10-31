@@ -1,0 +1,323 @@
+<?xml version="1.0"?>
+<!-- Thème Tunudan — généré par themes/build.py, ne pas modifier à la main -->
+<!-- Décorations Metacity : utilisées par Marco (MATE) et Muffin (Cinnamon) -->
+<metacity_theme>
+<info>
+  <name>Tunudan</name>
+  <author>Tunudan &lt;contact@tunudan.fr&gt;</author>
+  <copyright>2026 Tunudan, GPL-3.0-or-later</copyright>
+  <date>2026</date>
+  <description>Barre de titre noire, liseré orange, boutons ronds au survol</description>
+</info>
+
+<frame_geometry name="normal" rounded_top_left="false" rounded_top_right="false" rounded_bottom_left="false" rounded_bottom_right="false">
+  <distance name="left_width" value="3"/>
+  <distance name="right_width" value="3"/>
+  <distance name="bottom_height" value="3"/>
+  <distance name="left_titlebar_edge" value="6"/>
+  <distance name="right_titlebar_edge" value="6"/>
+  <aspect_ratio name="button" value="1.0"/>
+  <distance name="title_vertical_pad" value="10"/>
+  <border name="title_border" left="10" right="10" top="4" bottom="2"/>
+  <border name="button_border" left="1" right="1" top="4" bottom="2"/>
+</frame_geometry>
+
+<frame_geometry name="maximized" parent="normal" rounded_top_left="false" rounded_top_right="false" rounded_bottom_left="false" rounded_bottom_right="false">
+  <distance name="left_width" value="0"/>
+  <distance name="right_width" value="0"/>
+  <distance name="bottom_height" value="0"/>
+  <distance name="left_titlebar_edge" value="4"/>
+  <distance name="right_titlebar_edge" value="4"/>
+</frame_geometry>
+
+<frame_geometry name="border" has_title="false">
+  <distance name="left_width" value="3"/>
+  <distance name="right_width" value="3"/>
+  <distance name="bottom_height" value="3"/>
+  <distance name="left_titlebar_edge" value="0"/>
+  <distance name="right_titlebar_edge" value="0"/>
+  <distance name="button_width" value="0"/>
+  <distance name="button_height" value="0"/>
+  <distance name="title_vertical_pad" value="3"/>
+  <border name="title_border" left="0" right="0" top="0" bottom="0"/>
+  <border name="button_border" left="0" right="0" top="0" bottom="0"/>
+</frame_geometry>
+
+<draw_ops name="frame_focused">
+  <rectangle color="#0D0D0D" filled="true" x="0" y="0" width="width" height="height"/>
+  <rectangle color="#FF6B1A" filled="true" x="0" y="0" width="width" height="2"/>
+  <rectangle color="#2A2A2C" filled="false" x="0" y="0" width="width-1" height="height-1"/>
+  <rectangle color="#FF6B1A" filled="true" x="0" y="0" width="width" height="2"/>
+</draw_ops>
+
+<draw_ops name="frame_unfocused">
+  <rectangle color="#141416" filled="true" x="0" y="0" width="width" height="height"/>
+  <rectangle color="#2A2A2C" filled="false" x="0" y="0" width="width-1" height="height-1"/>
+</draw_ops>
+
+<draw_ops name="frame_focused_max">
+  <rectangle color="#0D0D0D" filled="true" x="0" y="0" width="width" height="height"/>
+  <rectangle color="#FF6B1A" filled="true" x="0" y="0" width="width" height="2"/>
+</draw_ops>
+
+<draw_ops name="frame_unfocused_max">
+  <rectangle color="#141416" filled="true" x="0" y="0" width="width" height="height"/>
+</draw_ops>
+
+<draw_ops name="title_focused">
+  <title color="#F5F1EA" x="(0 `max` ((width - title_width) / 2))" y="(0 `max` ((height - title_height) / 2))"/>
+</draw_ops>
+
+<draw_ops name="title_unfocused">
+  <title color="#8A857E" x="(0 `max` ((width - title_width) / 2))" y="(0 `max` ((height - title_height) / 2))"/>
+</draw_ops>
+
+<draw_ops name="blank">
+</draw_ops>
+
+<draw_ops name="close_normal">
+  <line color="#F5F1EA" width="2" x1="width/2-4" y1="height/2-4" x2="width/2+4" y2="height/2+4"/>
+  <line color="#F5F1EA" width="2" x1="width/2+4" y1="height/2-4" x2="width/2-4" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="close_unfocused">
+  <line color="#8A857E" width="2" x1="width/2-4" y1="height/2-4" x2="width/2+4" y2="height/2+4"/>
+  <line color="#8A857E" width="2" x1="width/2+4" y1="height/2-4" x2="width/2-4" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="close_prelight">
+  <arc color="#FF6B1A" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#0D0D0D" width="2" x1="width/2-4" y1="height/2-4" x2="width/2+4" y2="height/2+4"/>
+  <line color="#0D0D0D" width="2" x1="width/2+4" y1="height/2-4" x2="width/2-4" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="close_pressed">
+  <arc color="#C2410C" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#0D0D0D" width="2" x1="width/2-4" y1="height/2-4" x2="width/2+4" y2="height/2+4"/>
+  <line color="#0D0D0D" width="2" x1="width/2+4" y1="height/2-4" x2="width/2-4" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="minimize_normal">
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+4" x2="width/2+5" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="minimize_unfocused">
+  <line color="#8A857E" width="2" x1="width/2-5" y1="height/2+4" x2="width/2+5" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="minimize_prelight">
+  <arc color="#2A2A2C" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+4" x2="width/2+5" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="minimize_pressed">
+  <arc color="#3A3A3E" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+4" x2="width/2+5" y2="height/2+4"/>
+</draw_ops>
+
+<draw_ops name="maximize_normal">
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-4" x2="width/2+5" y2="height/2-4"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-4" x2="width/2-5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+5" y1="height/2-4" x2="width/2+5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+5" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="maximize_unfocused">
+  <line color="#8A857E" width="2" x1="width/2-5" y1="height/2-4" x2="width/2+5" y2="height/2-4"/>
+  <line color="#8A857E" width="2" x1="width/2-5" y1="height/2-4" x2="width/2-5" y2="height/2+5"/>
+  <line color="#8A857E" width="2" x1="width/2+5" y1="height/2-4" x2="width/2+5" y2="height/2+5"/>
+  <line color="#8A857E" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+5" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="maximize_prelight">
+  <arc color="#2A2A2C" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-4" x2="width/2+5" y2="height/2-4"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-4" x2="width/2-5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+5" y1="height/2-4" x2="width/2+5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+5" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="maximize_pressed">
+  <arc color="#3A3A3E" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-4" x2="width/2+5" y2="height/2-4"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-4" x2="width/2-5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+5" y1="height/2-4" x2="width/2+5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+5" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="restore_normal">
+  <line color="#F5F1EA" width="2" x1="width/2-2" y1="height/2-5" x2="width/2+5" y2="height/2-5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+5" y1="height/2-5" x2="width/2+5" y2="height/2+2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-2" x2="width/2+2" y2="height/2-2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-2" x2="width/2-5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+2" y1="height/2-2" x2="width/2+2" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+2" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="restore_unfocused">
+  <line color="#8A857E" width="2" x1="width/2-2" y1="height/2-5" x2="width/2+5" y2="height/2-5"/>
+  <line color="#8A857E" width="2" x1="width/2+5" y1="height/2-5" x2="width/2+5" y2="height/2+2"/>
+  <line color="#8A857E" width="2" x1="width/2-5" y1="height/2-2" x2="width/2+2" y2="height/2-2"/>
+  <line color="#8A857E" width="2" x1="width/2-5" y1="height/2-2" x2="width/2-5" y2="height/2+5"/>
+  <line color="#8A857E" width="2" x1="width/2+2" y1="height/2-2" x2="width/2+2" y2="height/2+5"/>
+  <line color="#8A857E" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+2" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="restore_prelight">
+  <arc color="#2A2A2C" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2-2" y1="height/2-5" x2="width/2+5" y2="height/2-5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+5" y1="height/2-5" x2="width/2+5" y2="height/2+2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-2" x2="width/2+2" y2="height/2-2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-2" x2="width/2-5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+2" y1="height/2-2" x2="width/2+2" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+2" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="restore_pressed">
+  <arc color="#3A3A3E" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2-2" y1="height/2-5" x2="width/2+5" y2="height/2-5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+5" y1="height/2-5" x2="width/2+5" y2="height/2+2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-2" x2="width/2+2" y2="height/2-2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2-2" x2="width/2-5" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2+2" y1="height/2-2" x2="width/2+2" y2="height/2+5"/>
+  <line color="#F5F1EA" width="2" x1="width/2-5" y1="height/2+5" x2="width/2+2" y2="height/2+5"/>
+</draw_ops>
+
+<draw_ops name="menu_normal">
+  <line color="#FF6B1A" width="2" x1="width/2" y1="height/2-4" x2="width/2+4" y2="height/2"/>
+  <line color="#FF6B1A" width="2" x1="width/2+4" y1="height/2" x2="width/2" y2="height/2+4"/>
+  <line color="#FF6B1A" width="2" x1="width/2" y1="height/2+4" x2="width/2-4" y2="height/2"/>
+  <line color="#FF6B1A" width="2" x1="width/2-4" y1="height/2" x2="width/2" y2="height/2-4"/>
+</draw_ops>
+
+<draw_ops name="menu_unfocused">
+  <line color="#8A857E" width="2" x1="width/2" y1="height/2-4" x2="width/2+4" y2="height/2"/>
+  <line color="#8A857E" width="2" x1="width/2+4" y1="height/2" x2="width/2" y2="height/2+4"/>
+  <line color="#8A857E" width="2" x1="width/2" y1="height/2+4" x2="width/2-4" y2="height/2"/>
+  <line color="#8A857E" width="2" x1="width/2-4" y1="height/2" x2="width/2" y2="height/2-4"/>
+</draw_ops>
+
+<draw_ops name="menu_prelight">
+  <arc color="#2A2A2C" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2" y1="height/2-4" x2="width/2+4" y2="height/2"/>
+  <line color="#F5F1EA" width="2" x1="width/2+4" y1="height/2" x2="width/2" y2="height/2+4"/>
+  <line color="#F5F1EA" width="2" x1="width/2" y1="height/2+4" x2="width/2-4" y2="height/2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-4" y1="height/2" x2="width/2" y2="height/2-4"/>
+</draw_ops>
+
+<draw_ops name="menu_pressed">
+  <arc color="#3A3A3E" filled="true" x="width/2-11" y="height/2-11" width="22" height="22" start_angle="0" extent_angle="360"/>
+  <line color="#F5F1EA" width="2" x1="width/2" y1="height/2-4" x2="width/2+4" y2="height/2"/>
+  <line color="#F5F1EA" width="2" x1="width/2+4" y1="height/2" x2="width/2" y2="height/2+4"/>
+  <line color="#F5F1EA" width="2" x1="width/2" y1="height/2+4" x2="width/2-4" y2="height/2"/>
+  <line color="#F5F1EA" width="2" x1="width/2-4" y1="height/2" x2="width/2" y2="height/2-4"/>
+</draw_ops>
+
+<frame_style name="normal" geometry="normal">
+  <piece position="entire_background" draw_ops="frame_unfocused"/>
+  <piece position="title" draw_ops="title_unfocused"/>
+  <button function="close" state="normal" draw_ops="close_unfocused"/>
+  <button function="close" state="prelight" draw_ops="close_prelight"/>
+  <button function="close" state="pressed" draw_ops="close_pressed"/>
+  <button function="maximize" state="normal" draw_ops="maximize_unfocused"/>
+  <button function="maximize" state="prelight" draw_ops="maximize_prelight"/>
+  <button function="maximize" state="pressed" draw_ops="maximize_pressed"/>
+  <button function="minimize" state="normal" draw_ops="minimize_unfocused"/>
+  <button function="minimize" state="prelight" draw_ops="minimize_prelight"/>
+  <button function="minimize" state="pressed" draw_ops="minimize_pressed"/>
+  <button function="menu" state="normal" draw_ops="menu_unfocused"/>
+  <button function="menu" state="prelight" draw_ops="menu_prelight"/>
+  <button function="menu" state="pressed" draw_ops="menu_pressed"/>
+</frame_style>
+
+<frame_style name="focused" geometry="normal" parent="normal">
+  <piece position="entire_background" draw_ops="frame_focused"/>
+  <piece position="title" draw_ops="title_focused"/>
+  <button function="close" state="normal" draw_ops="close_normal"/>
+  <button function="close" state="prelight" draw_ops="close_prelight"/>
+  <button function="close" state="pressed" draw_ops="close_pressed"/>
+  <button function="maximize" state="normal" draw_ops="maximize_normal"/>
+  <button function="maximize" state="prelight" draw_ops="maximize_prelight"/>
+  <button function="maximize" state="pressed" draw_ops="maximize_pressed"/>
+  <button function="minimize" state="normal" draw_ops="minimize_normal"/>
+  <button function="minimize" state="prelight" draw_ops="minimize_prelight"/>
+  <button function="minimize" state="pressed" draw_ops="minimize_pressed"/>
+  <button function="menu" state="normal" draw_ops="menu_normal"/>
+  <button function="menu" state="prelight" draw_ops="menu_prelight"/>
+  <button function="menu" state="pressed" draw_ops="menu_pressed"/>
+</frame_style>
+
+<frame_style name="normal_maximized" geometry="maximized">
+  <piece position="entire_background" draw_ops="frame_unfocused_max"/>
+  <piece position="title" draw_ops="title_unfocused"/>
+  <button function="close" state="normal" draw_ops="close_unfocused"/>
+  <button function="close" state="prelight" draw_ops="close_prelight"/>
+  <button function="close" state="pressed" draw_ops="close_pressed"/>
+  <button function="maximize" state="normal" draw_ops="restore_unfocused"/>
+  <button function="maximize" state="prelight" draw_ops="restore_prelight"/>
+  <button function="maximize" state="pressed" draw_ops="restore_pressed"/>
+  <button function="minimize" state="normal" draw_ops="minimize_unfocused"/>
+  <button function="minimize" state="prelight" draw_ops="minimize_prelight"/>
+  <button function="minimize" state="pressed" draw_ops="minimize_pressed"/>
+  <button function="menu" state="normal" draw_ops="menu_unfocused"/>
+  <button function="menu" state="prelight" draw_ops="menu_prelight"/>
+  <button function="menu" state="pressed" draw_ops="menu_pressed"/>
+</frame_style>
+
+<frame_style name="focused_maximized" geometry="maximized" parent="normal_maximized">
+  <piece position="entire_background" draw_ops="frame_focused_max"/>
+  <piece position="title" draw_ops="title_focused"/>
+  <button function="close" state="normal" draw_ops="close_normal"/>
+  <button function="close" state="prelight" draw_ops="close_prelight"/>
+  <button function="close" state="pressed" draw_ops="close_pressed"/>
+  <button function="maximize" state="normal" draw_ops="restore_normal"/>
+  <button function="maximize" state="prelight" draw_ops="restore_prelight"/>
+  <button function="maximize" state="pressed" draw_ops="restore_pressed"/>
+  <button function="minimize" state="normal" draw_ops="minimize_normal"/>
+  <button function="minimize" state="prelight" draw_ops="minimize_prelight"/>
+  <button function="minimize" state="pressed" draw_ops="minimize_pressed"/>
+  <button function="menu" state="normal" draw_ops="menu_normal"/>
+  <button function="menu" state="prelight" draw_ops="menu_prelight"/>
+  <button function="menu" state="pressed" draw_ops="menu_pressed"/>
+</frame_style>
+
+<frame_style name="border" geometry="border" parent="normal">
+  <piece position="entire_background" draw_ops="frame_unfocused"/>
+  <piece position="title" draw_ops="blank"/>
+</frame_style>
+
+<frame_style_set name="normal">
+  <frame focus="yes" state="normal" resize="both" style="focused"/>
+  <frame focus="no" state="normal" resize="both" style="normal"/>
+  <frame focus="yes" state="maximized" style="focused_maximized"/>
+  <frame focus="no" state="maximized" style="normal_maximized"/>
+  <frame focus="yes" state="shaded" style="focused"/>
+  <frame focus="no" state="shaded" style="normal"/>
+  <frame focus="yes" state="maximized_and_shaded" style="focused_maximized"/>
+  <frame focus="no" state="maximized_and_shaded" style="normal_maximized"/>
+</frame_style_set>
+
+<frame_style_set name="border">
+  <frame focus="yes" state="normal" resize="both" style="border"/>
+  <frame focus="no" state="normal" resize="both" style="border"/>
+  <frame focus="yes" state="maximized" style="border"/>
+  <frame focus="no" state="maximized" style="border"/>
+  <frame focus="yes" state="shaded" style="border"/>
+  <frame focus="no" state="shaded" style="border"/>
+  <frame focus="yes" state="maximized_and_shaded" style="border"/>
+  <frame focus="no" state="maximized_and_shaded" style="border"/>
+</frame_style_set>
+
+<window type="normal" style_set="normal"/>
+<window type="dialog" style_set="normal"/>
+<window type="modal_dialog" style_set="normal"/>
+<window type="menu" style_set="normal"/>
+<window type="utility" style_set="normal"/>
+<window type="border" style_set="border"/>
+
+<menu_icon function="close" state="normal" draw_ops="close_unfocused"/>
+<menu_icon function="maximize" state="normal" draw_ops="maximize_unfocused"/>
+<menu_icon function="unmaximize" state="normal" draw_ops="restore_unfocused"/>
+<menu_icon function="minimize" state="normal" draw_ops="minimize_unfocused"/>
+
+</metacity_theme>

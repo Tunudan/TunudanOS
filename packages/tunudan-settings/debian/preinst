@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+# On détourne les fichiers d'identité de Debian (base-files) au lieu de les écraser.
+# Sous Linux Mint, os-release reste celui de Mint (outils Mint et Ubuntu en dépendent).
+if [ "$1" = "install" ] || [ "$1" = "upgrade" ]; then
+    files="/etc/issue"
+    [ -f /etc/linuxmint/info ] || files="/usr/lib/os-release /etc/issue"
+    for f in $files; do
+        dpkg-divert --package tunudan-settings --add --rename \
+            --divert "$f.debian" "$f"
+    done
+fi
+#DEBHELPER#
+exit 0

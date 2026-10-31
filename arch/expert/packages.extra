@@ -1,0 +1,85 @@
+# --- Tunudan OS Expert : ajoutés au profil releng d'archiso (session live niri) ---
+# --- Tunudan OS Expert : paquets communs (tous bureaux) ---
+# Portails, trousseau, outils Wayland/X11 communs
+xdg-desktop-portal-gtk
+gnome-keyring
+polkit
+wl-clipboard
+brightnessctl
+libnewt
+# Applications
+kitty
+foot
+fuzzel
+firefox
+firefox-i18n-fr
+thunar
+gvfs
+imv
+mpv
+neovim
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+zsh-completions
+starship
+fastfetch
+btop
+# Polices et icônes
+inter-font
+ttf-jetbrains-mono-nerd
+noto-fonts
+noto-fonts-emoji
+papirus-icon-theme
+# Son, réseau, Bluetooth
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+networkmanager
+network-manager-applet
+bluez
+bluez-utils
+# Outils Tunudan (Python + GTK 3)
+python-gobject
+gtk3
+libnotify
+pacman-contrib
+tmate
+# Développement
+git
+base-devel
+python
+python-pip
+nodejs
+npm
+docker
+code
+# Cybersécurité (cours Tunudan)
+nmap
+wireshark-qt
+tcpdump
+gnu-netcat
+radare2
+gdb
+ghidra
+binwalk
+john
+hashcat
+hydra
+sqlmap
+qemu-desktop
+libvirt
+virt-manager
+dnsmasq
+
+# niri : défilement horizontal + DankMaterialShell, connexion greetd/tuigreet
+niri
+xwayland-satellite
+dms-shell-niri
+greetd
+greetd-tuigreet
+xdg-desktop-portal-gnome
+grim
+slurp
+swaybg

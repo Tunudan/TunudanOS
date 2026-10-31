@@ -1,0 +1,27 @@
+Source: tunudan-theme
+Section: x11
+Priority: optional
+Maintainer: Julien (Tunudan) <contact@tunudan.fr>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: tunudan-theme
+Architecture: all
+Depends: ${misc:Depends}, fonts-inter, fonts-jetbrains-mono, papirus-icon-theme
+Recommends: plymouth, plymouth-themes, dconf-cli, libglib2.0-bin, gtk-update-icon-cache
+Breaks: tunudan-desktop-xfce (<< 0.4.0), tunudan-desktop-plasma (<< 0.4.0)
+Replaces: tunudan-desktop-xfce (<< 0.4.0), tunudan-desktop-plasma (<< 0.4.0)
+Description: Thème complet de Tunudan OS (orange, noir, origami)
+ Tout l'habillage Tunudan, pour n'importe quel bureau :
+  - thème GTK 3 et couleurs libadwaita, décorations de fenêtres
+    (Xfce, Cinnamon, MATE/Metacity, Openbox/labwc) ;
+  - ~290 icônes dessinées (dossiers, applications, fichiers, appareils),
+    complétées par Papirus ;
+  - curseurs Tunudan (dont animations d'attente) ;
+  - 10 fonds d'écran origami clairs et sombres ;
+  - écrans de connexion SDDM, LightDM (GTK et slick-greeter) et GDM ;
+  - réglages par défaut de GNOME, KDE Plasma, Xfce, Cinnamon, MATE, LXQt,
+    Budgie, COSMIC, et configurations complètes i3, Sway et Hyprland ;
+  - thème de démarrage Plymouth et GRUB, habillage de l'installateur.
+ Chaque utilisateur garde la main : ce ne sont que des valeurs par défaut.

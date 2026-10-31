@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Accueil Tunudan
+Exec=tunudan-welcome --autostart
+Icon=tunudan
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-Delay=3

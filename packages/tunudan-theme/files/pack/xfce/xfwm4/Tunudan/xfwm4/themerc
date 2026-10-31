@@ -1,0 +1,19 @@
+# Thème Tunudan — généré par themes/build.py, ne pas modifier à la main
+button_offset=4
+button_spacing=2
+full_width_title=true
+title_alignment=center
+title_horizontal_offset=0
+title_vertical_offset_active=1
+title_vertical_offset_inactive=1
+title_shadow_active=false
+title_shadow_inactive=false
+active_text_color=#F5F1EA
+inactive_text_color=#8A857E
+show_frame_shadow=true
+show_popup_shadow=true
+shadow_delta_height=2
+shadow_delta_width=0
+shadow_delta_x=0
+shadow_delta_y=-5
+shadow_opacity=45

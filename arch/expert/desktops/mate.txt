@@ -1,0 +1,7 @@
+# MATE, connexion LightDM
+xorg-server
+mate
+mate-extra
+lightdm
+lightdm-gtk-greeter
+network-manager-applet

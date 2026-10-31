@@ -1,0 +1,10 @@
+# Écran de connexion GNOME (GDM) aux couleurs Tunudan
+[org/gnome/login-screen]
+logo='/usr/share/tunudan/login/tunudan-wordmark.png'
+
+[org/gnome/desktop/interface]
+accent-color='orange'
+color-scheme='prefer-dark'
+icon-theme='Tunudan'
+cursor-theme='Tunudan-cursors'
+font-name='Inter 11'

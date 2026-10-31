@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+if [ "$1" = "configure" ]; then
+    # Schémas, curseur par défaut, écrans de connexion (GDM, slick-greeter)
+    /usr/share/tunudan/themes/install-system.sh --activate-only || true
+    # Fond d'écran par défaut (prioritaire sur desktop-base)
+    if command -v update-alternatives >/dev/null 2>&1; then
+        mkdir -p /usr/share/images/desktop-base
+        update-alternatives --install /usr/share/images/desktop-base/desktop-background \
+            desktop-background /usr/share/backgrounds/tunudan/default.png 90 || true
+    fi
+    # Écran de démarrage
+    if command -v plymouth-set-default-theme >/dev/null 2>&1; then
+        plymouth-set-default-theme tunudan || true
+        if [ -x /usr/sbin/update-initramfs ] && [ -z "${TUNUDAN_NO_INITRAMFS:-}" ]; then
+            update-initramfs -u || true
+        fi
+    fi
+    # Thème GRUB (seulement si GRUB est déjà configuré sur la machine)
+    if [ -e /boot/grub/grub.cfg ] && command -v update-grub >/dev/null 2>&1; then
+        update-grub || true
+    fi
+fi
+#DEBHELPER#
+exit 0

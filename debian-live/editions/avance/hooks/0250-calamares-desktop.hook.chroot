@@ -1,0 +1,86 @@
+#!/usr/bin/python3
+# Calamares (édition Avancé) : ajoute la page « Bureau » et l'installation du bureau choisi.
+#  - instances packagechooser@desktop et contextualprocess@desktop ;
+#  - page « Bureau » après le clavier ;
+#  - installation du bureau avant la configuration de l'écran de connexion ;
+#  - connexion Internet exigée sur la page d'accueil (sauf si on garde Xfce, mais
+#    Calamares ne sait pas poser de condition : on la rend obligatoire).
+# Écrit en Python sans module YAML : seules des lignes sont insérées.
+import re
+import sys
+
+SETTINGS = "/etc/calamares/settings.conf"
+WELCOME = "/etc/calamares/modules/welcome.conf"
+
+try:
+    lines = open(SETTINGS, encoding="utf-8").read().split("\n")
+except FileNotFoundError:
+    sys.exit(0)
+if any("packagechooser@desktop" in l for l in lines):
+    sys.exit(0)
+
+INSTANCES = [
+    "- id: desktop",
+    "  module: packagechooser",
+    "  config: packagechooser-desktop.conf",
+    "- id: desktop",
+    "  module: contextualprocess",
+    "  config: contextualprocess-desktop.conf",
+]
+
+
+def find(pred, start=0, stop=None):
+    for i in range(start, len(lines) if stop is None else stop):
+        if pred(lines[i]):
+            return i
+    return -1
+
+
+# 1. instances
+i = find(lambda l: re.match(r"^instances:\s*$", l))
+if i >= 0:
+    lines[i + 1:i + 1] = INSTANCES
+else:
+    j = find(lambda l: re.match(r"^sequence:\s*$", l))
+    lines[j:j] = ["instances:"] + INSTANCES + [""]
+
+# 2. page « Bureau » dans le premier bloc show
+show = find(lambda l: re.match(r"^\s*-\s*show:\s*$", l))
+exe = find(lambda l: re.match(r"^\s*-\s*exec:\s*$", l), show + 1)
+k = find(lambda l: re.match(r"^\s*-\s*keyboard\s*$", l), show + 1, exe)
+if k < 0:
+    k = find(lambda l: re.match(r"^\s*-\s*partition\s*$", l), show + 1, exe) - 1
+indent = re.match(r"^(\s*)", lines[k + 1] if k + 1 < exe else lines[k]).group(1)
+lines.insert(k + 1, f"{indent}- packagechooser@desktop")
+
+# 3. installation du bureau dans le bloc exec
+exe = find(lambda l: re.match(r"^\s*-\s*exec:\s*$", l))
+end = find(lambda l: re.match(r"^\s*-\s*show:\s*$", l), exe + 1)
+end = len(lines) if end < 0 else end
+d = find(lambda l: re.match(r"^\s*-\s*displaymanager\s*$", l), exe + 1, end)
+if d < 0:
+    d = find(lambda l: re.match(r"^\s*-\s*umount\s*$", l), exe + 1, end)
+indent = re.match(r"^(\s*)", lines[d]).group(1)
+lines.insert(d, f"{indent}- contextualprocess@desktop")
+
+open(SETTINGS, "w", encoding="utf-8").write("\n".join(lines))
+print("Calamares : page Bureau et installation du bureau ajoutées")
+
+# 4. Internet obligatoire
+try:
+    w = open(WELCOME, encoding="utf-8").read().split("\n")
+except FileNotFoundError:
+    sys.exit(0)
+r = next((n for n, l in enumerate(w) if re.match(r"^\s+required:\s*$", l)), -1)
+if r >= 0:
+    base = len(w[r]) - len(w[r].lstrip())
+    n = r + 1
+    items = []
+    while n < len(w) and w[n].strip().startswith("-") and len(w[n]) - len(w[n].lstrip()) > base:
+        items.append(w[n].strip()[1:].strip())
+        n += 1
+    if "internet" not in items:
+        ind = (w[r + 1][:len(w[r + 1]) - len(w[r + 1].lstrip())]) if n > r + 1 else " " * (base + 4)
+        w.insert(n, f"{ind}- internet")
+        open(WELCOME, "w", encoding="utf-8").write("\n".join(w))
+        print("Calamares : connexion Internet exigée")

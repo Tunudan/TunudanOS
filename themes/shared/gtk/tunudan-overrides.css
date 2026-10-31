@@ -1,0 +1,63 @@
+/* Thème Tunudan — généré par themes/build.py, ne pas modifier à la main */
+/* Couleurs Tunudan ajoutées après adw-gtk3-dark (style libadwaita pour GTK 3) */
+@define-color accent_bg_color #FF6B1A;
+@define-color accent_fg_color #0D0D0D;
+@define-color accent_color #FF9A5C;
+@define-color destructive_bg_color #ED553B;
+@define-color destructive_fg_color #0D0D0D;
+@define-color destructive_color #ED553B;
+@define-color success_bg_color #5CB85C;
+@define-color success_color #5CB85C;
+@define-color warning_bg_color #F6B43C;
+@define-color warning_color #F6B43C;
+@define-color error_bg_color #ED553B;
+@define-color error_color #ED553B;
+@define-color window_bg_color #1C1C1E;
+@define-color window_fg_color #F5F1EA;
+@define-color view_bg_color #141416;
+@define-color view_fg_color #F5F1EA;
+@define-color headerbar_bg_color #0D0D0D;
+@define-color headerbar_fg_color #F5F1EA;
+@define-color headerbar_backdrop_color #141416;
+@define-color headerbar_border_color #2A2A2C;
+@define-color sidebar_bg_color #141416;
+@define-color sidebar_fg_color #F5F1EA;
+@define-color sidebar_backdrop_color #141416;
+@define-color secondary_sidebar_bg_color #141416;
+@define-color secondary_sidebar_fg_color #F5F1EA;
+@define-color card_bg_color rgba(255, 255, 255, 0.04);
+@define-color card_fg_color #F5F1EA;
+@define-color dialog_bg_color #1C1C1E;
+@define-color dialog_fg_color #F5F1EA;
+@define-color popover_bg_color #1C1C1E;
+@define-color popover_fg_color #F5F1EA;
+@define-color thumbnail_bg_color #1C1C1E;
+@define-color thumbnail_fg_color #F5F1EA;
+@define-color theme_selected_bg_color #FF6B1A;
+@define-color theme_selected_fg_color #0D0D0D;
+@define-color theme_bg_color #1C1C1E;
+@define-color theme_fg_color #F5F1EA;
+@define-color theme_base_color #141416;
+@define-color theme_text_color #F5F1EA;
+@define-color borders #2A2A2C;
+
+/* Panneaux des bureaux GTK (Xfce, MATE, Budgie) */
+.xfce4-panel.background, .mate-panel-menu-bar, PanelToplevel, PanelWidget,
+.budgie-panel, .budgie-panel .budgie-menubar {
+    background-color: alpha(#0D0D0D, 0.94);
+    color: #F5F1EA;
+}
+.xfce4-panel button:checked, .budgie-panel button:checked,
+.budgie-panel .launcher.running.focused, .budgie-panel #tasklist-button:checked {
+    background-color: alpha(#FF6B1A, 0.25);
+    box-shadow: inset 0 -2px #FF6B1A;
+}
+.budgie-panel .running { box-shadow: inset 0 -2px alpha(#FF6B1A, 0.6); }
+.raven, .budgie-popover, .budgie-menu, .budgie-notification-window {
+    background-color: #1C1C1E;
+    color: #F5F1EA;
+}
+.budgie-menu button:hover, .budgie-menu row:selected {
+    background-color: #FF6B1A;
+    color: #0D0D0D;
+}

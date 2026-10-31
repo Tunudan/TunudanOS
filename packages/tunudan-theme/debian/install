@@ -1,0 +1,6 @@
+files/logo/* usr/share/pixmaps/tunudan/
+files/plymouth/tunudan usr/share/plymouth/themes/
+files/grub/tunudan usr/share/grub/themes/
+files/grub.d/tunudan.cfg etc/default/grub.d/
+files/calamares/tunudan usr/share/calamares/branding/
+files/fastfetch/* usr/share/tunudan/fastfetch/

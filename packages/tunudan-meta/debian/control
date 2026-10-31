@@ -1,0 +1,51 @@
+Source: tunudan-meta
+Section: metapackages
+Priority: optional
+Maintainer: Julien (Tunudan) <contact@tunudan.fr>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: tunudan-edition-minimal
+Architecture: all
+Depends: ${misc:Depends}, tunudan-settings, tunudan-tools, network-manager, sudo,
+ bash-completion, nano, curl, wget, htop, man-db, less, unattended-upgrades, ufw,
+ ca-certificates, locales, console-setup, keyboard-configuration
+Recommends: openssh-server, fastfetch, tmate, needrestart
+Description: Tunudan OS — édition Minimal (console)
+ Système Debian de base sans interface graphique : réseau (nmtui),
+ mises à jour automatiques, pare-feu, aide à distance en terminal.
+
+Package: tunudan-edition-avance
+Architecture: all
+Depends: ${misc:Depends}, tunudan-edition-minimal, tunudan-theme,
+ firefox-esr, firefox-esr-l10n-fr, libreoffice-writer, libreoffice-calc,
+ libreoffice-impress, libreoffice-l10n-fr, vlc, pipewire-audio, plymouth, flatpak,
+ cups, system-config-printer, git, build-essential, python3, python3-venv,
+ python3-pip, pipx, nodejs, npm, docker.io, gdb, fonts-noto-color-emoji
+Recommends: codium, docker-compose, jupyter-notebook, sqlitebrowser, shellcheck,
+ neovim, tmux, rustdesk, thunderbird, thunderbird-l10n-fr
+Description: Tunudan OS — édition Avancé (Debian, bureau au choix)
+ Logiciels de l'édition Avancé pour les élèves développement et IA : Python,
+ Node.js, Docker, Git, VSCodium, Jupyter, bureautique. Le bureau est choisi
+ à l'installation (paquets tunudan-desktop-*). Pack cyber disponible
+ séparément (tunudan-pack-cyber).
+
+Package: tunudan-edition-mint
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, tunudan-settings
+Recommends: rustdesk, tmate, fastfetch
+Description: Tunudan OS — édition Débutant (Linux Mint, bureau au choix)
+ Habillage et outils Tunudan ajoutés à Linux Mint : thème complet, bouton
+ « Appeler Tunudan », assistant d'accueil, mises à jour simplifiées. Le
+ bureau (Cinnamon, MATE ou Xfce) est choisi à l'installation.
+
+Package: tunudan-pack-cyber
+Architecture: all
+Depends: ${misc:Depends}, nmap, wireshark, tcpdump, netcat-openbsd, radare2, gdb,
+ binwalk, john, hydra, sqlmap, qemu-system-x86, libvirt-daemon-system, virt-manager
+Recommends: hashcat, ghidra, gobuster, ffuf, nikto, exploitdb
+Description: Tunudan OS — pack Cybersécurité
+ Outils des cours de cybersécurité Tunudan : analyse réseau, reverse
+ engineering, audit de mots de passe et machines virtuelles de labo.
+ À n'utiliser que sur des systèmes dont vous avez l'autorisation.

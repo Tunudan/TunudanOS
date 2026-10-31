@@ -1,0 +1,5 @@
+# Environnement de build de l'édition Expert (Arch Linux + niri)
+FROM archlinux:latest
+RUN pacman -Syu --noconfirm --needed archiso python python-cairosvg librsvg \
+        imagemagick git base-devel && pacman -Scc --noconfirm
+WORKDIR /src

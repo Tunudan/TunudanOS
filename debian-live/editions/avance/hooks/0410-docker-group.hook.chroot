@@ -1,0 +1,10 @@
+#!/bin/sh
+# Les nouveaux utilisateurs pourront utiliser Docker sans sudo.
+set -e
+if grep -q '^EXTRA_GROUPS=' /etc/adduser.conf 2>/dev/null; then
+    sed -i 's/^#\?EXTRA_GROUPS=.*/EXTRA_GROUPS="audio video plugdev netdev docker"/' /etc/adduser.conf
+else
+    echo 'EXTRA_GROUPS="audio video plugdev netdev docker"' >> /etc/adduser.conf
+fi
+sed -i 's/^#\?ADD_EXTRA_GROUPS=.*/ADD_EXTRA_GROUPS=1/' /etc/adduser.conf
+grep -q '^ADD_EXTRA_GROUPS=' /etc/adduser.conf || echo 'ADD_EXTRA_GROUPS=1' >> /etc/adduser.conf

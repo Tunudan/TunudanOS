@@ -1,0 +1,112 @@
+Source: tunudan-desktops
+Section: metapackages
+Priority: optional
+Maintainer: Julien (Tunudan) <contact@tunudan.fr>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: tunudan-desktop-gnome
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, gnome-core, gdm3, gnome-tweaks,
+ gnome-shell-extension-appindicator, file-roller, network-manager-gnome
+Recommends: gnome-shell-extension-dashtodock, gnome-software-plugin-flatpak, dconf-cli
+Description: Tunudan OS — bureau GNOME
+ GNOME, épuré et moderne, au thème Tunudan (accent orange, fonds origami
+ jour/nuit, icônes et curseurs Tunudan). Écran de connexion GDM.
+
+Package: tunudan-desktop-plasma
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, kde-plasma-desktop, sddm,
+ qml6-module-qtquick-controls, qml6-module-qtquick-layouts, konsole, dolphin,
+ kate, okular, gwenview, ark, spectacle, plasma-nm, plasma-pa, kde-config-gtk-style,
+ kde-config-sddm
+Recommends: plasma-discover, plasma-discover-backend-flatpak, kde-config-flatpak,
+ kwalletmanager, partitionmanager, kcalc
+Description: Tunudan OS — bureau KDE Plasma
+ KDE Plasma 6 avec le thème global Tunudan (couleurs TunudanDark, panneau
+ en bas, profil Konsole orange). Écran de connexion SDDM Tunudan.
+
+Package: tunudan-desktop-xfce
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, xfce4, xfce4-whiskermenu-plugin,
+ xfce4-pulseaudio-plugin, xfce4-terminal, xfce4-screenshooter, xfce4-notifyd,
+ thunar-archive-plugin, xarchiver, ristretto, mousepad, network-manager-gnome,
+ lightdm, lightdm-gtk-greeter
+Recommends: lightdm-gtk-greeter-settings, xfce4-power-manager, xfce4-taskmanager
+Description: Tunudan OS — bureau Xfce
+ Xfce léger et rapide : un panneau en bas façon Windows, menu Whisker,
+ thème Tunudan. Écran de connexion LightDM Tunudan.
+
+Package: tunudan-desktop-cinnamon
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, cinnamon-core, nemo,
+ gnome-terminal, file-roller, eog, network-manager-gnome, lightdm, lightdm-gtk-greeter
+Recommends: cinnamon-l10n, gnome-calculator, gnome-screenshot
+Description: Tunudan OS — bureau Cinnamon
+ Cinnamon (le bureau de Linux Mint) avec le thème Tunudan pour le panneau,
+ le menu, les notifications et les fenêtres. Écran de connexion LightDM.
+
+Package: tunudan-desktop-mate
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, mate-desktop-environment,
+ network-manager-gnome, lightdm, lightdm-gtk-greeter
+Recommends: mate-tweak, mate-desktop-environment-extras
+Description: Tunudan OS — bureau MATE
+ MATE, le bureau classique (héritier de GNOME 2), avec décorations Marco
+ et thème Tunudan. Écran de connexion LightDM.
+
+Package: tunudan-desktop-lxqt
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, lxqt, sddm,
+ qml6-module-qtquick-controls, qml6-module-qtquick-layouts, qterminal,
+ pcmanfm-qt, lximage-qt, lxqt-archiver, network-manager-gnome
+Recommends: labwc, screengrab, featherpad
+Description: Tunudan OS — bureau LXQt
+ LXQt, très léger, basé sur Qt : thème du panneau et palette Tunudan,
+ décorations Openbox/labwc. Écran de connexion SDDM Tunudan.
+
+Package: tunudan-desktop-budgie
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, budgie-desktop,
+ budgie-control-center, nemo, gnome-terminal, file-roller, eog,
+ network-manager-gnome, lightdm, lightdm-gtk-greeter
+Recommends: budgie-desktop-view, budgie-indicator-applet, gnome-screenshot
+Description: Tunudan OS — bureau Budgie
+ Budgie, simple et élégant, porté par le thème GTK Tunudan.
+ Écran de connexion LightDM.
+
+Package: tunudan-desktop-sway
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, sway, swaybg, swayidle,
+ swaylock, waybar, foot, fuzzel, mako-notifier, grim, slurp, wl-clipboard,
+ xdg-desktop-portal-wlr, brightnessctl, network-manager-gnome, pavucontrol,
+ thunar, lxpolkit, sddm, qml6-module-qtquick-controls, qml6-module-qtquick-layouts,
+ fonts-font-awesome
+Recommends: xwayland, qt6ct
+Description: Tunudan OS — gestionnaire de fenêtres Sway (mosaïque, Wayland)
+ Sway avec une configuration complète en AZERTY (raccourcis, barre Waybar,
+ lanceur fuzzel, notifications mako), aux couleurs Tunudan.
+
+Package: tunudan-desktop-i3
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, i3, rofi, feh, picom, dex,
+ xss-lock, kitty, imagemagick, network-manager-gnome, pavucontrol, thunar,
+ lxpolkit, brightnessctl, sddm, qml6-module-qtquick-controls,
+ qml6-module-qtquick-layouts, fonts-font-awesome
+Recommends: qt6ct, arandr
+Description: Tunudan OS — gestionnaire de fenêtres i3 (mosaïque, X11)
+ i3 avec une configuration complète en AZERTY (raccourcis, barre i3bar,
+ lanceur rofi, notifications dunst), aux couleurs Tunudan.
+
+Package: tunudan-desktop-hyprland
+Architecture: all
+Depends: ${misc:Depends}, tunudan-theme, tunudan-tools, hyprland, waybar, kitty,
+ fuzzel, mako-notifier, grim, slurp, wl-clipboard, brightnessctl,
+ network-manager-gnome, pavucontrol, thunar, lxpolkit, sddm,
+ qml6-module-qtquick-controls, qml6-module-qtquick-layouts, fonts-font-awesome
+Recommends: hyprpaper, hypridle, hyprlock, xdg-desktop-portal-hyprland, qt6ct
+Description: Tunudan OS — Hyprland (mosaïque animée, Wayland)
+ Hyprland avec une configuration complète en AZERTY, animations, Waybar,
+ fuzzel et mako aux couleurs Tunudan. Sous Debian 13, Hyprland vient de
+ trixie-backports (activé automatiquement).

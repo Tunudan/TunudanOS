@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Tunudan
+Description=Grue origami Tunudan et barre de progression orange
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/tunudan
+ScriptFile=/usr/share/plymouth/themes/tunudan/tunudan.script

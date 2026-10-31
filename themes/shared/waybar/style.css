@@ -1,0 +1,47 @@
+/* Thème Tunudan — généré par themes/build.py, ne pas modifier à la main — Waybar (Sway, Hyprland, niri) */
+* {
+    font-family: "Inter", "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+window#waybar {
+    background: rgba(13, 13, 13, 0.88);
+    color: #F5F1EA;
+}
+#custom-tunudan {
+    color: #FF6B1A;
+    font-size: 17px;
+    padding: 0 14px;
+}
+#workspaces button {
+    padding: 0 10px;
+    margin: 4px 2px;
+    color: #8A857E;
+    background: transparent;
+    border-radius: 8px;
+}
+#workspaces button:hover { background: #2A2A2C; color: #F5F1EA; }
+#workspaces button.active, #workspaces button.focused {
+    color: #0D0D0D;
+    background: #FF6B1A;
+}
+#workspaces button.urgent { color: #0D0D0D; background: #ED553B; }
+#window { color: #BDB7AE; padding: 0 10px; }
+#clock, #battery, #network, #pulseaudio, #wireplumber, #cpu, #memory, #tray, #backlight {
+    padding: 0 12px;
+    margin: 4px 3px;
+    background: #1C1C1E;
+    border-radius: 8px;
+}
+#clock { color: #FF9A5C; font-weight: bold; }
+#battery.warning { color: #F6B43C; }
+#battery.critical { color: #ED553B; }
+#network.disconnected, #pulseaudio.muted { color: #8A857E; }
+tooltip {
+    background: #1C1C1E;
+    border: 1px solid #FF6B1A;
+    border-radius: 8px;
+}
+tooltip label { color: #F5F1EA; }

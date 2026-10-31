@@ -1,0 +1,192 @@
+#!/usr/bin/python3
+"""tunudan-help — « Appeler Tunudan » : aide à distance en un clic.
+
+Interface graphique : affiche le contact et lance RustDesk en montrant
+l'identifiant à dicter au téléphone.
+Console (édition Minimal, SSH) : contact, résumé système et partage du
+terminal avec tmate.
+"""
+import argparse
+import os
+import platform
+import subprocess
+import sys
+
+sys.path.insert(0, "/usr/lib/tunudan")
+import tunudan_common as tc  # noqa: E402
+
+
+def contact_lines():
+    return [
+        f"Téléphone : {tc.get('contact', 'telephone', 'non renseigné')}",
+        f"E-mail    : {tc.get('contact', 'email', 'aide@tunudan.fr')}",
+        f"Site      : {tc.get('contact', 'site', 'https://tunudan.fr')}",
+    ]
+
+
+def system_summary():
+    info = {}
+    try:
+        with open("/etc/os-release", encoding="utf-8") as f:
+            for line in f:
+                k, _, v = line.strip().partition("=")
+                info[k] = v.strip('"')
+    except OSError:
+        pass
+    mem = ""
+    try:
+        with open("/proc/meminfo", encoding="utf-8") as f:
+            total = int(f.readline().split()[1]) // 1024
+            mem = f"{total} Mo"
+    except (OSError, ValueError, IndexError):
+        pass
+    disk = tc.run(["df", "-h", "--output=avail", "/"]).stdout.split()
+    return [
+        f"Système   : {info.get('PRETTY_NAME', 'inconnu')}",
+        f"Édition   : {tc.get('edition', 'nom', 'inconnue')}",
+        f"Noyau     : {platform.release()}",
+        f"Mémoire   : {mem}",
+        f"Disque    : {disk[-1] if disk else '?'} libres",
+        f"Machine   : {platform.node()}",
+    ]
+
+
+def rustdesk_id():
+    if not tc.which("rustdesk"):
+        return None
+    r = tc.run(["rustdesk", "--get-id"], timeout=10)
+    out = r.stdout.strip().splitlines()
+    return out[-1].strip() if r.returncode == 0 and out else None
+
+
+def start_rustdesk():
+    subprocess.Popen(["rustdesk"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     start_new_session=True)
+
+
+# --------------------------------------------------------------- console
+def console():
+    o = "\033[1;38;5;208m"
+    r = "\033[0m"
+    print(f"\n{o}Tunudan — Besoin d'aide ?{r}\n")
+    for line in contact_lines():
+        print("  " + line)
+    print()
+    for line in system_summary():
+        print("  " + line)
+    print(f"\n  {o}1{r}  Partager mon terminal avec un formateur (tmate)")
+    print(f"  {o}2{r}  Copier le résumé système dans ~/tunudan-diagnostic.txt")
+    print(f"  {o}q{r}  Quitter\n")
+    try:
+        choice = input("Votre choix : ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        print()
+        return 0
+    if choice == "1":
+        if not tc.which("tmate"):
+            print("tmate n'est pas installé : sudo apt install tmate")
+            return 1
+        print("\nUne session partagée va s'ouvrir. Donnez au formateur le lien")
+        print("« ssh session » affiché en bas de l'écran. Tapez « exit » pour arrêter.\n")
+        input("Appuyez sur Entrée pour commencer…")
+        return subprocess.call(["tmate"])
+    if choice == "2":
+        path = os.path.expanduser("~/tunudan-diagnostic.txt")
+        extra = tc.run(["journalctl", "-p", "err", "-b", "--no-pager", "-n", "50"]).stdout
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(system_summary()) + "\n\nErreurs récentes :\n" + extra)
+        print(f"Résumé enregistré dans {path}")
+    return 0
+
+
+# --------------------------------------------------------------- graphique
+def gui():
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gdk, GLib, Gtk
+
+    tc.apply_css(Gtk, Gdk)
+    win = Gtk.Window(title="Appeler Tunudan")
+    win.set_default_size(560, 460)
+    win.set_position(Gtk.WindowPosition.CENTER)
+    win.set_icon_name("tunudan")
+    win.connect("destroy", Gtk.main_quit)
+
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=16, margin=32)
+    win.add(box)
+
+    title = Gtk.Label(label="Besoin d'aide ?")
+    title.get_style_context().add_class("tunudan-title")
+    box.pack_start(title, False, False, 0)
+
+    phone = Gtk.Label(label="Appelez-nous au " + tc.get("contact", "telephone", "non renseigné"))
+    phone.get_style_context().add_class("tunudan-big")
+    box.pack_start(phone, False, False, 0)
+
+    explain = Gtk.Label(label="Puis cliquez sur le bouton ci-dessous et donnez au formateur\n"
+                              "le numéro qui s'affiche. Il pourra voir votre écran et vous aider.")
+    explain.set_justify(Gtk.Justification.CENTER)
+    box.pack_start(explain, False, False, 0)
+
+    id_label = Gtk.Label(label="")
+    id_label.get_style_context().add_class("tunudan-id")
+    id_label.set_selectable(True)
+
+    status = Gtk.Label(label="")
+
+    def on_click(_btn):
+        if not tc.which("rustdesk"):
+            status.set_text("L'outil d'aide à distance (RustDesk) n'est pas installé.\n"
+                            "Appelez-nous, nous vous guiderons.")
+            return
+        start_rustdesk()
+        status.set_text("Ouverture de l'aide à distance…")
+
+        def poll(attempt=[0]):
+            attempt[0] += 1
+            rid = rustdesk_id()
+            if rid:
+                id_label.set_text(" ".join(rid[i:i + 3] for i in range(0, len(rid), 3)))
+                status.set_text("Votre numéro d'aide (à dicter au formateur) :\n"
+                                "acceptez ensuite la demande de connexion qui s'affiche.")
+                return False
+            if attempt[0] > 15:
+                status.set_text("Le numéro s'affiche dans la fenêtre RustDesk (« Votre ID »).")
+                return False
+            return True
+
+        GLib.timeout_add_seconds(1, poll)
+
+    btn = Gtk.Button(label="Lancer l'aide à distance")
+    btn.get_style_context().add_class("tunudan-cta")
+    btn.connect("clicked", on_click)
+    box.pack_start(btn, False, False, 8)
+    box.pack_start(status, False, False, 0)
+    box.pack_start(id_label, False, False, 0)
+
+    mail = Gtk.Label(label=tc.get("contact", "email", "aide@tunudan.fr") + "  ·  "
+                     + tc.get("contact", "site", "https://tunudan.fr"))
+    mail.set_opacity(0.7)
+    box.pack_end(mail, False, False, 0)
+
+    win.show_all()
+    btn.grab_focus()
+    Gtk.main()
+    return 0
+
+
+def main():
+    p = argparse.ArgumentParser(description="Aide à distance Tunudan")
+    p.add_argument("--console", action="store_true", help="forcer le mode texte")
+    p.add_argument("--info", action="store_true", help="afficher le résumé système et quitter")
+    a = p.parse_args()
+    if a.info:
+        print("\n".join(contact_lines() + [""] + system_summary()))
+        return 0
+    if a.console or not tc.gtk_available():
+        return console()
+    return gui()
+
+
+if __name__ == "__main__":
+    sys.exit(main())

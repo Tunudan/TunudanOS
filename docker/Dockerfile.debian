@@ -1,0 +1,11 @@
+# Environnement de build des éditions Debian (Minimal, Débutant, Avancé)
+FROM debian:trixie
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        live-build debootstrap squashfs-tools xorriso cpio mtools dosfstools \
+        isolinux syslinux-common syslinux-utils grub-pc-bin grub-efi-amd64-bin \
+        grub-efi-amd64-signed shim-signed \
+        build-essential debhelper dpkg-dev fakeroot python3 python3-cairosvg librsvg2-bin \
+        imagemagick ca-certificates curl gpg qemu-utils \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /src

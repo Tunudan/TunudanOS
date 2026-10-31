@@ -1,0 +1,32 @@
+# Thème Tunudan — généré par themes/build.py, ne pas modifier à la main
+[colors.primary]
+foreground = "#F5F1EA"
+background = "#0D0D0D"
+
+[colors.cursor]
+text = "#0D0D0D"
+cursor = "#FF6B1A"
+
+[colors.selection]
+text = "#0D0D0D"
+background = "#FF6B1A"
+
+[colors.normal]
+black = "#1C1C1E"
+red = "#ED553B"
+green = "#5CB85C"
+yellow = "#F6B43C"
+blue = "#4A90D9"
+magenta = "#C2410C"
+cyan = "#3FB8AF"
+white = "#BDB7AE"
+
+[colors.bright]
+black = "#4A4A4E"
+red = "#FF7A5C"
+green = "#7ED37E"
+yellow = "#FFD166"
+blue = "#7FB3FF"
+magenta = "#FF6B1A"
+cyan = "#6FE0D8"
+white = "#F5F1EA"

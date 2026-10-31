@@ -1,0 +1,19 @@
+Source: tunudan-tools
+Section: utils
+Priority: optional
+Maintainer: Julien (Tunudan) <contact@tunudan.fr>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: tunudan-tools
+Architecture: all
+Depends: ${misc:Depends}, python3, tunudan-settings, debconf, util-linux
+Recommends: python3-gi, gir1.2-gtk-3.0, libnotify-bin, polkitd, tmate
+Suggests: rustdesk
+Description: Outils maison Tunudan OS (accueil, aide à distance, mises à jour)
+ tunudan-welcome : assistant du premier démarrage (taille du texte, cours).
+ tunudan-help    : bouton « Appeler Tunudan », aide à distance RustDesk ou
+                   partage de terminal tmate en mode console.
+ tunudan-update  : état des mises à jour, mise à jour en un clic et
+                   rappel de redémarrage.

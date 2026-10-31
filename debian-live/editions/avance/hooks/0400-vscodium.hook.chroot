@@ -1,0 +1,14 @@
+#!/bin/sh
+# Ajoute le dépôt officiel VSCodium et installe l'éditeur.
+set -e
+command -v curl >/dev/null 2>&1 || apt-get install -y --no-install-recommends curl ca-certificates
+apt-get install -y --no-install-recommends gpg
+KEY=/usr/share/keyrings/vscodium-archive-keyring.gpg
+if curl -fsSL https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg | gpg --dearmor -o "$KEY"; then
+    echo "deb [arch=amd64,arm64 signed-by=$KEY] https://download.vscodium.com/debs vscodium main" \
+        > /etc/apt/sources.list.d/vscodium.list
+    apt-get update
+    apt-get install -y codium || echo "AVERTISSEMENT : VSCodium non installé" >&2
+else
+    echo "AVERTISSEMENT : clé VSCodium introuvable" >&2
+fi

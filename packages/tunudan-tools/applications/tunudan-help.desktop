@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Appeler Tunudan
+Name[en]=Call Tunudan
+Comment=Obtenir de l'aide à distance d'un formateur
+Exec=tunudan-help
+Icon=tunudan
+Terminal=false
+Categories=System;Utility;
+Keywords=aide;assistance;distance;support;help;

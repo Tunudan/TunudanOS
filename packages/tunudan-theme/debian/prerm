@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+if [ "$1" = "remove" ]; then
+    update-alternatives --remove desktop-background /usr/share/backgrounds/tunudan/default.png || true
+    update-alternatives --remove x-cursor-theme /usr/share/icons/Tunudan-cursors/cursor.theme || true
+    # Écran de connexion de Linux Mint : on remet celui d'avant
+    if [ -f /etc/lightdm/slick-greeter.conf.avant-tunudan ]; then
+        mv -f /etc/lightdm/slick-greeter.conf.avant-tunudan /etc/lightdm/slick-greeter.conf
+    elif grep -qs Tunudan /etc/lightdm/slick-greeter.conf; then
+        rm -f /etc/lightdm/slick-greeter.conf
+    fi
+fi
+#DEBHELPER#
+exit 0

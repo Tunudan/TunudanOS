@@ -1,0 +1,11 @@
+#!/bin/sh
+# Calamares : branding Tunudan et lanceur renommé (éditions graphiques).
+set -e
+[ -f /etc/calamares/settings.conf ] || exit 0
+sed -i 's/^branding:.*/branding: tunudan/' /etc/calamares/settings.conf
+for f in /usr/share/applications/install-debian.desktop /usr/share/applications/calamares.desktop; do
+    [ -f "$f" ] || continue
+    sed -i -e 's/^Name=.*/Name=Installer Tunudan OS/' \
+           -e 's/^Name\[[a-zA-Z_]*\]=.*//' \
+           -e 's/^Icon=.*/Icon=tunudan/' "$f"
+done

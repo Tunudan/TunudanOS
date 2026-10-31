@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+# Le thème complet est déposé par le script d'installation du pack de thèmes
+override_dh_auto_install:
+	sh files/pack/install-system.sh --files-only --distro debian --destdir $(CURDIR)/debian/tunudan-theme

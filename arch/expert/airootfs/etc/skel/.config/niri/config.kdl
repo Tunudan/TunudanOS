@@ -1,0 +1,188 @@
+// Tunudan OS Expert — niri (compositeur Wayland à défilement horizontal)
+// Les fenêtres s'alignent en colonnes sur une bande infinie :
+// Mod+molette ou Mod+flèches pour défiler, Mod+O pour la vue d'ensemble.
+// Documentation : https://github.com/niri-wm/niri/wiki
+
+input {
+    keyboard {
+        xkb {
+            layout "fr"
+        }
+        numlock
+    }
+    touchpad {
+        tap
+        natural-scroll
+        dwt
+    }
+    mouse {
+        accel-profile "flat"
+    }
+    focus-follows-mouse max-scroll-amount="0%"
+    warp-mouse-to-focus
+}
+
+prefer-no-csd
+screenshot-path "~/Images/Captures/capture-%Y-%m-%d-%H%M%S.png"
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+layout {
+    gaps 14
+    center-focused-column "on-overflow"
+    always-center-single-column
+    background-color "transparent"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+    default-column-width { proportion 0.5; }
+
+    focus-ring {
+        width 3
+        active-gradient from="#FF6B1A" to="#FF9A5C" angle=135
+        inactive-color "#2A2A2C"
+    }
+    border {
+        off
+    }
+    shadow {
+        on
+        softness 30
+        spread 4
+        offset x=0 y=6
+        color "#00000099"
+    }
+    struts {
+        left 8
+        right 8
+    }
+}
+
+animations {
+    slowdown 1.0
+    window-open {
+        duration-ms 220
+        curve "ease-out-expo"
+    }
+    workspace-switch {
+        spring damping-ratio=0.85 stiffness=800 epsilon=0.0001
+    }
+    horizontal-view-movement {
+        spring damping-ratio=0.9 stiffness=700 epsilon=0.0001
+    }
+}
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+window-rule {
+    match app-id="^kitty$"
+    opacity 0.94
+}
+
+window-rule {
+    match title="^Appeler Tunudan$"
+    match title="^Mises à jour$"
+    open-floating true
+}
+
+environment {
+    QT_QPA_PLATFORM "wayland"
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    XDG_CURRENT_DESKTOP "niri"
+}
+
+// xwayland-satellite est lancé automatiquement par niri pour les applis X11
+cursor {
+    xcursor-theme "Tunudan-cursors"
+    xcursor-size 24
+}
+
+spawn-at-startup "/usr/local/bin/tunudan-niri-session"
+
+binds {
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    // Lanceurs
+    Mod+Return hotkey-overlay-title="Terminal" { spawn "kitty"; }
+    Mod+D hotkey-overlay-title="Lanceur d'applications" { spawn "fuzzel"; }
+    Mod+Space hotkey-overlay-title="Lanceur DMS" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    Mod+E hotkey-overlay-title="Fichiers" { spawn "thunar"; }
+    Mod+B hotkey-overlay-title="Navigateur" { spawn "firefox"; }
+    Mod+H hotkey-overlay-title="Appeler Tunudan" { spawn "tunudan-help"; }
+    Super+Alt+L hotkey-overlay-title="Verrouiller" { spawn "dms" "ipc" "call" "lock" "lock"; }
+
+    // Son et luminosité
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
+
+    Mod+O repeat=false { toggle-overview; }
+    Mod+Q { close-window; }
+
+    // Se déplacer sur la bande (flèches ou hjkl façon vim)
+    Mod+Left  { focus-column-left; }
+    Mod+Right { focus-column-right; }
+    Mod+Up    { focus-window-or-workspace-up; }
+    Mod+Down  { focus-window-or-workspace-down; }
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+Up    { move-window-up-or-to-workspace-up; }
+    Mod+Shift+Down  { move-window-down-or-to-workspace-down; }
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+
+    // Défilement à la molette : le cœur de niri
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+    Mod+WheelScrollRight { focus-column-right; }
+    Mod+WheelScrollLeft  { focus-column-left; }
+    Mod+Shift+WheelScrollDown { focus-column-right; }
+    Mod+Shift+WheelScrollUp   { focus-column-left; }
+    Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+
+    // Espaces de travail, clavier AZERTY : touches & é " ' ( de la rangée du haut
+    Mod+ampersand { focus-workspace 1; }
+    Mod+eacute { focus-workspace 2; }
+    Mod+quotedbl { focus-workspace 3; }
+    Mod+apostrophe { focus-workspace 4; }
+    Mod+parenleft { focus-workspace 5; }
+    Mod+Shift+ampersand { move-column-to-workspace 1; }
+    Mod+Shift+eacute { move-column-to-workspace 2; }
+    Mod+Shift+quotedbl { move-column-to-workspace 3; }
+    Mod+Shift+apostrophe { move-column-to-workspace 4; }
+    Mod+Shift+parenleft { move-column-to-workspace 5; }
+
+    // Colonnes
+    Mod+Comma  { consume-or-expel-window-left; }
+    Mod+Semicolon { consume-or-expel-window-right; }
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+C { center-column; }
+    Mod+W { toggle-column-tabbed-display; }
+    Mod+V { toggle-window-floating; }
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    // Captures d'écran
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Shift+E { quit; }
+    Mod+Shift+P { power-off-monitors; }
+}

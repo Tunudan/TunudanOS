@@ -1,0 +1,73 @@
+/* Installateur Calamares aux couleurs Tunudan (orange #FF6B1A, noir #0D0D0D) */
+#mainApp, #viewManager, #viewManagerStack, #viewManagerStack > QWidget {
+    background-color: #141416;
+    color: #F5F1EA;
+}
+#viewManagerStack QLabel, #viewManagerStack QCheckBox, #viewManagerStack QRadioButton,
+#viewManagerStack QGroupBox {
+    color: #F5F1EA;
+}
+#sidebarApp { background-color: #0D0D0D; }
+
+#viewManagerStack QListView, #viewManagerStack QTreeView, #viewManagerStack QTableView,
+#viewManagerStack QTextBrowser, #viewManagerStack QPlainTextEdit, #viewManagerStack QLineEdit,
+#viewManagerStack QComboBox, #viewManagerStack QSpinBox {
+    background-color: #1C1C1E;
+    color: #F5F1EA;
+    border: 1px solid #2E2E32;
+    border-radius: 6px;
+    padding: 3px;
+    selection-background-color: #FF6B1A;
+    selection-color: #0D0D0D;
+}
+#viewManagerStack QListView::item, #viewManagerStack QTreeView::item { padding: 6px 4px; }
+#viewManagerStack QListView::item:selected, #viewManagerStack QTreeView::item:selected {
+    background-color: #FF6B1A;
+    color: #0D0D0D;
+}
+QLineEdit:focus, QComboBox:focus { border: 1px solid #FF6B1A; }
+QComboBox QAbstractItemView { background-color: #1C1C1E; color: #F5F1EA; }
+
+QPushButton {
+    background-color: #2A2A2E;
+    color: #F5F1EA;
+    border: 1px solid #3A3A3F;
+    border-radius: 8px;
+    padding: 7px 18px;
+}
+QPushButton:hover { border-color: #FF6B1A; }
+QPushButton:disabled { color: #6B6B70; border-color: #2A2A2E; }
+#view-button-next {
+    background-color: #FF6B1A;
+    color: #0D0D0D;
+    border: none;
+    font-weight: bold;
+}
+#view-button-next:hover { background-color: #FF8A47; }
+#view-button-next:disabled { background-color: #5A3A28; color: #9A8A80; }
+
+QProgressBar, #exec-progress {
+    background-color: #1C1C1E;
+    border: none;
+    border-radius: 5px;
+    color: #F5F1EA;
+    text-align: center;
+    min-height: 10px;
+}
+QProgressBar::chunk { background-color: #FF6B1A; border-radius: 5px; }
+#exec-message { color: #F5F1EA; }
+
+QScrollBar:vertical { background: transparent; width: 10px; }
+QScrollBar::handle:vertical { background: #3A3A3F; border-radius: 5px; min-height: 30px; }
+QScrollBar::handle:vertical:hover { background: #FF6B1A; }
+QScrollBar::add-line, QScrollBar::sub-line { height: 0; }
+
+/* Barre latérale : étapes dessinées par Calamares (couleurs de branding.desc) */
+#sidebarApp QListView, #sidebarApp QTreeView { background-color: #0D0D0D; border: none; }
+#sidebarApp QPushButton {
+    background: transparent;
+    border: none;
+    padding: 2px 6px;
+    color: #8A8580;
+}
+#sidebarApp QPushButton:hover { color: #FF6B1A; }

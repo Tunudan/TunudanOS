@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>Tunudan</vendor>
+  <vendor_url>https://tunudan.fr</vendor_url>
+  <action id="fr.tunudan.update">
+    <description>Mettre à jour le système</description>
+    <message>Le mot de passe est nécessaire pour installer les mises à jour</message>
+    <icon_name>tunudan</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/lib/tunudan/tunudan-update-root</annotate>
+  </action>
+</policyconfig>

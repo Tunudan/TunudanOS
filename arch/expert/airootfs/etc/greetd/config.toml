@@ -1,0 +1,12 @@
+# Tunudan OS Expert — écran de connexion texte (tuigreet) et session niri
+[terminal]
+vt = 1
+
+[default_session]
+command = "tuigreet --time --remember --asterisks --greeting 'Tunudan OS Expert — Apprendre. Coder. Avancer.' --cmd niri-session"
+user = "greeter"
+
+# Session live : connexion automatique (retiré par tunudan-install sur le système installé)
+[initial_session]
+command = "niri-session"
+user = "tunudan"

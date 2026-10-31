@@ -1,0 +1,239 @@
+#!/usr/bin/python3
+"""tunudan-installer — première page de l'installation de Tunudan OS Débutant (Linux Mint).
+
+Fait choisir le bureau (Cinnamon, MATE ou Xfce), le transmet à l'installateur de
+Mint (Ubiquity) par debconf, puis lance Ubiquity normalement. Le bureau choisi est
+installé à la fin de l'installation par /usr/lib/tunudan/install-desktop.
+
+TUNUDAN_INSTALLER_DRYRUN=1 : n'écrit rien et ne lance pas Ubiquity (tests).
+"""
+import os
+import shlex
+import subprocess
+import sys
+
+DESKTOPS = [
+    ("cinnamon", "Cinnamon", "Recommandé"),
+    ("mate", "MATE", "Ordinateurs anciens"),
+    ("xfce", "Xfce", "Léger et rapide"),
+]
+LIVE_DESKTOP = "cinnamon"          # bureau déjà présent sur la clé
+CARDS = "/usr/share/tunudan/desktops"
+UBIQUITY_EXEC = "/usr/lib/tunudan/live/ubiquity-exec"
+DRYRUN = os.environ.get("TUNUDAN_INSTALLER_DRYRUN") == "1"
+ORANGE, NOIR, GRIS, CREME = "#FF6B1A", "#0D0D0D", "#1C1C1E", "#F5F1EA"
+
+
+def descriptions():
+    d = {}
+    try:
+        with open(os.path.join(CARDS, "desktops.tsv"), encoding="utf-8") as f:
+            for line in f:
+                parts = line.rstrip("\n").split("\t")
+                if len(parts) == 3:
+                    d[parts[0]] = parts[2]
+    except OSError:
+        pass
+    return d
+
+
+def online() -> bool:
+    try:
+        out = subprocess.run(["nmcli", "-t", "networking", "connectivity"],
+                             capture_output=True, text=True, timeout=5).stdout.strip()
+        return out == "full"
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+def preseed(de: str) -> None:
+    cmd = f"/usr/lib/tunudan/install-desktop {de} --target /target --distro mint"
+    line = f"ubiquity ubiquity/success_command string {cmd}\n"
+    if DRYRUN:
+        print(line, end="")
+        return
+    sudo = [] if os.geteuid() == 0 else ["sudo", "-n"]
+    subprocess.run(sudo + ["debconf-set-selections"], input=line, text=True, check=True)
+
+
+def launch_ubiquity() -> None:
+    try:
+        with open(UBIQUITY_EXEC, encoding="utf-8") as f:
+            exec_line = f.read().strip()
+    except OSError:
+        exec_line = "sh -c 'ubiquity gtk_ui'"
+    # Codes de champ des fichiers .desktop (%k, %U…) : retirés
+    args = [a for a in shlex.split(exec_line) if not (len(a) == 2 and a.startswith("%"))]
+    if DRYRUN:
+        print("lancerait :", args)
+        return
+    os.execvp(args[0], args)
+
+
+def main() -> int:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gdk, GdkPixbuf, Gtk
+
+    css = f"""
+    window, .tunudan-bg {{ background: {NOIR}; color: {CREME}; }}
+    .titre {{ font-size: 26px; font-weight: 800; color: {CREME}; }}
+    .sous-titre {{ font-size: 14px; color: alpha({CREME}, 0.75); }}
+    .marque {{ color: {ORANGE}; font-weight: 800; letter-spacing: 2px; font-size: 12px; }}
+    .carte {{ background: {GRIS}; border-radius: 16px; padding: 14px;
+             border: 2px solid alpha({CREME}, 0.08); }}
+    .carte.choisie {{ border-color: {ORANGE}; background: shade({GRIS}, 1.15); }}
+    .carte-nom {{ font-size: 18px; font-weight: 800; }}
+    .badge {{ background: alpha({ORANGE}, 0.18); color: {ORANGE}; border-radius: 99px;
+              padding: 2px 10px; font-size: 11px; font-weight: 700; }}
+    .desc {{ color: alpha({CREME}, 0.8); }}
+    .alerte {{ color: #F6B43C; }}
+    button.principal {{ background: {ORANGE}; color: {NOIR}; font-weight: 800;
+                        border-radius: 10px; padding: 10px 22px; border: none;
+                        box-shadow: none; text-shadow: none; }}
+    button.principal:hover {{ background: #FF8A47; }}
+    button.secondaire {{ background: transparent; color: {CREME}; border-radius: 10px;
+                         padding: 10px 18px; border: 1px solid alpha({CREME}, 0.25); }}
+    radio {{ min-width: 18px; min-height: 18px; }}
+    """
+    provider = Gtk.CssProvider()
+    provider.load_from_data(css.encode())
+    Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider,
+                                             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+    desc = descriptions()
+    choice = {"de": LIVE_DESKTOP}
+
+    win = Gtk.Window(title="Installer Tunudan OS")
+    win.set_default_size(1180, 720)
+    win.set_position(Gtk.WindowPosition.CENTER)
+    win.set_icon_name("tunudan")
+    win.connect("destroy", Gtk.main_quit)
+
+    root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
+    root.set_border_width(32)
+    win.add(root)
+
+    head = Gtk.Box(spacing=16)
+    logo_path = "/usr/share/pixmaps/tunudan/tunudan-64.png"
+    if os.path.exists(logo_path):
+        head.pack_start(Gtk.Image.new_from_file(logo_path), False, False, 0)
+    titles = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+    for text, cls in (("TUNUDAN OS · ÉDITION DÉBUTANT", "marque"),
+                      ("Choisissez votre bureau", "titre"),
+                      ("C'est l'apparence de votre ordinateur : le menu, la barre des tâches, "
+                       "les fenêtres. Vous pourrez en changer plus tard.", "sous-titre")):
+        lab = Gtk.Label(label=text, xalign=0)
+        lab.set_line_wrap(True)
+        lab.get_style_context().add_class(cls)
+        titles.pack_start(lab, False, False, 0)
+    head.pack_start(titles, True, True, 0)
+    root.pack_start(head, False, False, 0)
+
+    grid = Gtk.Box(spacing=18, homogeneous=True)
+    root.pack_start(grid, True, True, 0)
+    cards, group = {}, None
+    for de, name, badge in DESKTOPS:
+        ev = Gtk.EventBox()
+        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        card.get_style_context().add_class("carte")
+        ev.add(card)
+        img = os.path.join(CARDS, f"{de}.png")
+        if os.path.exists(img):
+            pb = GdkPixbuf.Pixbuf.new_from_file_at_scale(img, 340, -1, True)
+            card.pack_start(Gtk.Image.new_from_pixbuf(pb), False, False, 0)
+        row = Gtk.Box(spacing=10)
+        radio = Gtk.RadioButton.new_from_widget(group)
+        group = group or radio
+        row.pack_start(radio, False, False, 0)
+        lab = Gtk.Label(label=name, xalign=0)
+        lab.get_style_context().add_class("carte-nom")
+        row.pack_start(lab, False, False, 0)
+        b = Gtk.Label(label=badge)
+        b.get_style_context().add_class("badge")
+        row.pack_end(b, False, False, 0)
+        card.pack_start(row, False, False, 0)
+        d = Gtk.Label(label=desc.get(de, ""), xalign=0)
+        d.set_line_wrap(True)
+        d.set_max_width_chars(36)
+        d.get_style_context().add_class("desc")
+        card.pack_start(d, False, False, 0)
+        if de != LIVE_DESKTOP:
+            n = Gtk.Label(label="Téléchargé pendant l'installation (Internet nécessaire)", xalign=0)
+            n.set_line_wrap(True)
+            n.get_style_context().add_class("sous-titre")
+            card.pack_start(n, False, False, 0)
+        grid.pack_start(ev, True, True, 0)
+        cards[de] = (card, radio)
+
+        def on_toggle(r, de=de):
+            if r.get_active():
+                choice["de"] = de
+                for k, (c, _) in cards.items():
+                    ctx = c.get_style_context()
+                    (ctx.add_class if k == de else ctx.remove_class)("choisie")
+                refresh()
+        radio.connect("toggled", on_toggle)
+        ev.connect("button-press-event", lambda *_a, r=radio: r.set_active(True))
+
+    alert = Gtk.Label(xalign=0)
+    alert.set_line_wrap(True)
+    alert.get_style_context().add_class("alerte")
+    root.pack_start(alert, False, False, 0)
+
+    bar = Gtk.Box(spacing=12)
+    quit_btn = Gtk.Button(label="Annuler")
+    quit_btn.get_style_context().add_class("secondaire")
+    quit_btn.connect("clicked", lambda *_: win.destroy())
+    go = Gtk.Button(label="Continuer l'installation  →")
+    go.get_style_context().add_class("principal")
+    bar.pack_end(go, False, False, 0)
+    bar.pack_end(quit_btn, False, False, 0)
+    root.pack_start(bar, False, False, 0)
+
+    def refresh():
+        if choice["de"] != LIVE_DESKTOP and not online():
+            alert.set_text("⚠ Pas de connexion Internet pour l'instant. Connectez-vous au Wi-Fi "
+                           "(icône réseau en bas à droite) ou à la box : sinon, l'ordinateur "
+                           "démarrera avec Cinnamon et vous pourrez installer "
+                           f"{dict((d, n) for d, n, _ in DESKTOPS)[choice['de']]} plus tard.")
+        else:
+            alert.set_text("")
+
+    def on_go(*_):
+        try:
+            preseed(choice["de"])
+        except (OSError, subprocess.CalledProcessError) as e:
+            dlg = Gtk.MessageDialog(transient_for=win, message_type=Gtk.MessageType.ERROR,
+                                    buttons=Gtk.ButtonsType.OK,
+                                    text=f"Impossible de transmettre le choix du bureau : {e}")
+            dlg.run()
+            dlg.destroy()
+            return
+        win.hide()
+        while Gtk.events_pending():
+            Gtk.main_iteration()
+        launch_ubiquity()
+        Gtk.main_quit()
+    go.connect("clicked", on_go)
+
+    cards[LIVE_DESKTOP][0].get_style_context().add_class("choisie")
+    refresh()
+    win.show_all()
+    if os.environ.get("TUNUDAN_INSTALLER_SHOT"):
+        from gi.repository import GLib
+
+        def shot():
+            w = win.get_window()
+            pb = Gdk.pixbuf_get_from_window(w, 0, 0, w.get_width(), w.get_height())
+            pb.savev(os.environ["TUNUDAN_INSTALLER_SHOT"], "png", [], [])
+            Gtk.main_quit()
+            return False
+        if os.environ.get("TUNUDAN_INSTALLER_PICK"):
+            cards[os.environ["TUNUDAN_INSTALLER_PICK"]][1].set_active(True)
+        GLib.timeout_add(1500, shot)
+    Gtk.main()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

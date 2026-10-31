@@ -1,0 +1,5 @@
+# GNOME, connexion GDM
+gnome
+gnome-tweaks
+gnome-shell-extension-appindicator
+gdm

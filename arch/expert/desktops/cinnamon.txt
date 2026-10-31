@@ -1,0 +1,8 @@
+# Cinnamon, connexion LightDM
+xorg-server
+cinnamon
+nemo-fileroller
+gnome-terminal
+eog
+lightdm
+lightdm-gtk-greeter

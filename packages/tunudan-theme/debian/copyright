@@ -1,0 +1,9 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: tunudan-theme
+Source: https://github.com/tunudan/tunudan-os
+
+Files: *
+Copyright: 2026 Tunudan
+License: GPL-3+
+ Ce programme est un logiciel libre ; voir /usr/share/common-licenses/GPL-3.
+ Les visuels (fonds, logos) sont distribués sous CC BY-SA 4.0.

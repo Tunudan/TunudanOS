@@ -1,0 +1,20 @@
+# Invite Tunudan (starship)
+format = "[](#FF6B1A)[ $username@$hostname ](bg:#FF6B1A fg:#0D0D0D bold)[](fg:#FF6B1A bg:#1C1C1E)$directory$git_branch$git_status[](fg:#1C1C1E) "
+add_newline = true
+
+[username]
+show_always = true
+format = "$user"
+[hostname]
+ssh_only = false
+format = "$hostname"
+[directory]
+style = "bg:#1C1C1E fg:#F5F1EA"
+format = "[ $path ]($style)"
+truncation_length = 3
+[git_branch]
+style = "bg:#1C1C1E fg:#FF9A5C"
+format = "[ $branch ]($style)"
+[git_status]
+style = "bg:#1C1C1E fg:#FF9A5C"
+format = "[$all_status$ahead_behind ]($style)"

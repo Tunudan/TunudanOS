@@ -1,0 +1,7 @@
+# Dépôt Tunudan OS. Renommer ce fichier en tunudan.sources une fois
+# repo.tunudan.fr publié (voir docs/depot-apt.md).
+Types: deb
+URIs: https://repo.tunudan.fr/debian
+Suites: trixie
+Components: main
+Signed-By: /usr/share/keyrings/tunudan-archive-keyring.gpg

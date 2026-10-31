@@ -1,0 +1,8 @@
+#!/bin/sh
+# Dernières retouches : thème de démarrage, nettoyage.
+set -e
+if command -v plymouth-set-default-theme >/dev/null 2>&1 && [ -d /usr/share/plymouth/themes/tunudan ]; then
+    plymouth-set-default-theme tunudan
+fi
+apt-get clean
+rm -rf /var/lib/apt/lists/* /tmp/* 2>/dev/null || true

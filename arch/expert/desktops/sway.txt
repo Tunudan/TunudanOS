@@ -1,0 +1,18 @@
+# Sway, connexion SDDM
+sway
+swaybg
+swayidle
+swaylock
+waybar
+foot
+fuzzel
+mako
+grim
+slurp
+xdg-desktop-portal-wlr
+pavucontrol
+polkit-gnome
+sddm
+qt6-declarative
+qt6-svg
+ttf-font-awesome

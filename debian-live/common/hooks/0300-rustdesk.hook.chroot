@@ -1,0 +1,17 @@
+#!/bin/sh
+# Installe RustDesk (aide à distance), absent des dépôts Debian.
+# Désactivé pour l'édition Minimal. En cas d'échec, l'ISO reste utilisable.
+set -e
+# shellcheck disable=SC2050 # @RUSTDESK@ est remplacé au build
+[ "@RUSTDESK@" = "yes" ] || exit 0
+command -v curl >/dev/null 2>&1 || apt-get install -y --no-install-recommends curl ca-certificates
+API=https://api.github.com/repos/rustdesk/rustdesk/releases/latest
+URL=$(curl -fsSL "$API" | grep -o 'https://[^"]*x86_64\.deb' | head -n1 || true)
+if [ -z "$URL" ]; then
+    echo "AVERTISSEMENT : RustDesk introuvable, l'aide à distance graphique sera absente." >&2
+    exit 0
+fi
+echo "Téléchargement de $URL"
+curl -fsSL -o /tmp/rustdesk.deb "$URL"
+apt-get install -y /tmp/rustdesk.deb || echo "AVERTISSEMENT : installation de RustDesk échouée" >&2
+rm -f /tmp/rustdesk.deb
