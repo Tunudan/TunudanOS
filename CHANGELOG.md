@@ -5,6 +5,11 @@ numérotation [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.4.1] - 2026-10-31
+
+Première version dont les 4 ISO se construisent (localement et sur GitHub Actions)
+et démarrent dans QEMU.
+
 ### Corrigé
 - Construction des 4 ISO : arrêt silencieux de live-build (grep sans résultat avec
   `set -e`/`pipefail`), scripts non exécutables, conflit `.zshrc` avec archiso.
@@ -34,5 +39,6 @@ numérotation [SemVer](https://semver.org/lang/fr/).
 ### Modifié
 - `make iso` ne construit que l'image Docker utile à l'édition demandée.
 
-[Non publié]: https://github.com/Tunudan/TunudanOS/compare/v0.4.0...HEAD
+[Non publié]: https://github.com/Tunudan/TunudanOS/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/Tunudan/TunudanOS/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/Tunudan/TunudanOS/releases/tag/v0.4.0

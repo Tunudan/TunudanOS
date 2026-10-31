@@ -1,3 +1,9 @@
+tunudan-meta (0.4.1) trixie; urgency=medium
+
+  * pack cyber : radare2 en Recommends (retiré de Debian 13).
+
+ -- Julien (Tunudan) <contact@tunudan.fr>  Sat, 31 Oct 2026 18:56:06 +0100
+
 tunudan-meta (0.4.0) trixie; urgency=medium
 
   * Débutant devient une édition Linux Mint (tunudan-edition-mint).
