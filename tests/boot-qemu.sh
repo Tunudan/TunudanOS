@@ -6,6 +6,7 @@
 set -eu
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 EDITION="${1:-debutant}"
+HEADLESS="${2:-}"   # lu avant « set -- », qui remplace les arguments
 ISO=$(find "$ROOT/out/iso" -name "tunudan-os-$EDITION-*.iso" | sort | tail -n1)
 [ -n "$ISO" ] || { echo "Aucune ISO pour $EDITION dans out/iso (make iso EDITION=$EDITION)"; exit 1; }
 OVMF=""
@@ -19,7 +20,7 @@ qemu-system-x86_64 -device help 2>/dev/null | grep -q '"virtio-vga"' && VGA=virt
 # shellcheck disable=SC2086 # ACCEL contient plusieurs options
 set -- -m "${QEMU_MEM:-4096}" -smp 2 $ACCEL -cdrom "$ISO" -boot d -vga $VGA -monitor unix:/tmp/tunudan-qemu.sock,server,nowait
 [ -n "$OVMF" ] && set -- "$@" -drive if=pflash,format=raw,readonly=on,file="$OVMF"
-if [ "${2:-}" = "--headless" ] || [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
+if [ "$HEADLESS" = "--headless" ] || [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
     qemu-system-x86_64 "$@" -display none &
     PID=$!
     sleep 90

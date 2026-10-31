@@ -103,7 +103,7 @@ fi
 mkdir -p config/includes.chroot_after_packages/usr/lib/live/config
 cp -a "$ROOT/debian-live/common/live-config/." config/includes.chroot_after_packages/usr/lib/live/config/
 # Valeurs propres à l'édition dans les hooks
-sed -i "s/@EDITION@/$EDITION/g; s/@VERSION@/$VERSION/g; s/@RUSTDESK@/${RUSTDESK:-no}/g" config/hooks/live/*
+sed -i "s/@EDITION@/$EDITION/g; s/@EDITION_LABEL@/$EDITION_LABEL/g; s/@VERSION@/$VERSION/g; s/@RUSTDESK@/${RUSTDESK:-no}/g" config/hooks/live/*
 chmod +x config/hooks/live/* config/includes.chroot_after_packages/usr/lib/live/config/*
 
 # 3. Menu de démarrage aux couleurs Tunudan
