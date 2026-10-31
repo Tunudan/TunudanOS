@@ -1,0 +1,191 @@
+# Tunudan OS : vérifications et construction automatique des ISO
+#
+#   pull request, push sur develop, feature/*, fix/*  -> lint uniquement
+#   push sur main         -> lint + 4 ISO, téléchargeables 7 jours (onglet Actions > Artifacts)
+#   tag v*  (ex. v0.4.0)  -> lint + 4 ISO + Avancé cyber, publiés dans une Release GitHub
+#   lancement manuel      -> onglet Actions > « Tunudan OS » > Run workflow (édition au choix)
+name: Tunudan OS
+
+on:
+  push:
+    branches: [main, develop, "feature/**", "fix/**", "release/**", "hotfix/**"]
+    tags: ["v*"]
+    paths-ignore: ["**.md", "docs/**"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**"]
+  workflow_dispatch:
+    inputs:
+      edition:
+        description: "Édition à construire"
+        type: choice
+        options: [toutes, minimal, debutant, avance, expert]
+        default: toutes
+      cyber:
+        description: "Construire aussi Avancé + pack cybersécurité"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  lint:
+    name: Vérifications (lint)
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: Outils
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git ca-certificates shellcheck \
+              python3 python3-yaml python3-pip libglib2.0-bin gsettings-desktop-schemas
+          pip install --break-system-packages -q kdl-py
+      - uses: actions/checkout@v4
+      - run: ./tests/lint.sh
+
+  editions:
+    name: Liste des éditions
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.ref == 'refs/heads/main' ||
+      startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    outputs:
+      list: ${{ steps.m.outputs.list }}
+    steps:
+      - id: m
+        env:
+          EDITION: ${{ inputs.edition || 'toutes' }}
+          CYBER: ${{ inputs.cyber || startsWith(github.ref, 'refs/tags/') }}
+        run: |
+          if [ "$EDITION" = toutes ]; then
+              list='"minimal","debutant","avance","expert"'
+          else
+              list="\"$EDITION\""
+          fi
+          [ "$CYBER" = true ] && list="$list,\"avance-cyber\""
+          echo "list=[$list]" >> "$GITHUB_OUTPUT"
+          echo "Éditions : [$list]"
+
+  release-draft:
+    name: Préparer la release
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vérifier que VERSION correspond au tag
+        run: |
+          v=$(cat VERSION)
+          if [ "${GITHUB_REF_NAME#v}" != "$v" ]; then
+              echo "::error::Le tag $GITHUB_REF_NAME ne correspond pas au fichier VERSION ($v)"
+              exit 1
+          fi
+      - name: Créer la release (brouillon)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 && exit 0
+          pre=""
+          case "$GITHUB_REF_NAME" in v0.*|*-*) pre="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" --draft $pre --title "Tunudan OS ${GITHUB_REF_NAME#v}" --notes "$(cat <<'EOF'
+          ## Tunudan OS
+
+          | Fichier | Édition |
+          | --- | --- |
+          | `tunudan-os-minimal-*.iso` | Minimal (Debian 13, console) |
+          | `tunudan-os-debutant-*.iso` | Débutant (Linux Mint) |
+          | `tunudan-os-avance-*.iso` | Avancé (Debian 13, 10 bureaux) |
+          | `tunudan-os-avance-cyber-*.iso` | Avancé + pack cybersécurité |
+          | `tunudan-os-expert-*.iso` | Expert (Arch Linux) |
+
+          GitHub limite chaque fichier à 2 Go : les ISO plus grosses sont coupées en
+          morceaux `.part00`, `.part01`… À recoller avant usage :
+
+          ```sh
+          cat tunudan-os-avance-X.Y.Z-amd64.iso.part* > tunudan-os-avance-X.Y.Z-amd64.iso
+          sha256sum -c tunudan-os-avance-X.Y.Z-amd64.iso.sha256
+          ```
+          EOF
+          )"
+
+  iso:
+    name: ISO ${{ matrix.edition }}
+    needs: [lint, editions, release-draft]
+    # release-draft est ignoré hors tags : on continue tant que rien n'a échoué
+    if: ${{ !cancelled() && !failure() && needs.editions.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: ${{ fromJSON(needs.editions.outputs.list) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Libérer de la place sur le disque
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup \
+              /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift /usr/local/share/powershell
+          sudo docker image prune -af >/dev/null
+          df -h /
+
+      - name: Construire l'ISO
+        env:
+          ITEM: ${{ matrix.edition }}
+        run: |
+          edition=${ITEM%-cyber}
+          cyber=0
+          [ "$ITEM" != "$edition" ] && cyber=1
+          make iso EDITION="$edition" CYBER="$cyber"
+          ls -lh out/iso/
+
+      - name: Envoyer dans les artefacts (7 jours)
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tunudan-os-${{ matrix.edition }}
+          path: out/iso/*
+          compression-level: 0
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Ajouter à la release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p dist
+          for f in out/iso/*.iso; do
+              name=$(basename "$f")
+              # Limite GitHub : 2 Gio par fichier de release
+              if [ "$(stat -c %s "$f")" -gt $((2000 * 1024 * 1024)) ]; then
+                  split -b 1900M -d -a 2 "$f" "dist/$name.part"
+              else
+                  cp "$f" dist/
+              fi
+              cp "$f.sha256" dist/
+          done
+          ls -lh dist/
+          gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+
+  publish:
+    name: Publier la release
+    needs: iso
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release edit "$GITHUB_REF_NAME" --draft=false
