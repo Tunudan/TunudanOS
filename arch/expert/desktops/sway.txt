@@ -15,4 +15,4 @@ polkit-gnome
 sddm
 qt6-declarative
 qt6-svg
-ttf-font-awesome
+otf-font-awesome
