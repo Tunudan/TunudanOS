@@ -42,9 +42,9 @@ Description: Tunudan OS — édition Débutant (Linux Mint, bureau au choix)
 
 Package: tunudan-pack-cyber
 Architecture: all
-Depends: ${misc:Depends}, nmap, wireshark, tcpdump, netcat-openbsd, radare2, gdb,
+Depends: ${misc:Depends}, nmap, wireshark, tcpdump, netcat-openbsd, gdb,
  binwalk, john, hydra, sqlmap, qemu-system-x86, libvirt-daemon-system, virt-manager
-Recommends: hashcat, ghidra, gobuster, ffuf, nikto, exploitdb
+Recommends: radare2, hashcat, ghidra, gobuster, ffuf, nikto, exploitdb
 Description: Tunudan OS — pack Cybersécurité
  Outils des cours de cybersécurité Tunudan : analyse réseau, reverse
  engineering, audit de mots de passe et machines virtuelles de labo.

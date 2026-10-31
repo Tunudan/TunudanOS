@@ -75,9 +75,15 @@ lb config \
     [ "$CYBER" = 1 ] && echo "tunudan-pack-cyber"
 } > config/package-lists/tunudan.list.chroot
 
-# Paquets maison : live-build en fait un dépôt local
+# Paquets maison : live-build installe TOUS les .deb de packages.chroot, on n'y met
+# donc que ceux de l'édition (les autres bureaux vont dans /opt/tunudan/repo, plus bas)
 mkdir -p config/packages.chroot
-cp "$ROOT"/out/debs/*.deb config/packages.chroot/
+PKGS="tunudan-theme tunudan-settings tunudan-tools tunudan-edition-minimal"
+PKGS="$PKGS $({ grep -o '^tunudan-[a-z0-9-]*' "$ED_DIR/packages.list" || true; } | tr '\n' ' ')"
+[ "$CYBER" = 1 ] && PKGS="$PKGS tunudan-pack-cyber"
+for p in $PKGS; do
+    cp "$ROOT"/out/debs/"${p}"_*.deb config/packages.chroot/
+done
 
 # Fichiers et hooks : communs puis spécifiques à l'édition
 mkdir -p config/includes.chroot_after_packages config/hooks/live
