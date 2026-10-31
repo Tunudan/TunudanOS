@@ -1,0 +1,34 @@
+name: Signaler un problème
+description: Quelque chose ne marche pas dans une ISO ou un outil Tunudan
+labels: [bug]
+body:
+  - type: dropdown
+    id: edition
+    attributes:
+      label: Édition
+      options: [Minimal, Débutant, Avancé, Avancé cyber, Expert, Thèmes seuls]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "0.4.0 (cat /etc/os-release)"
+  - type: input
+    id: bureau
+    attributes:
+      label: Bureau
+      placeholder: "Xfce, GNOME, niri…"
+  - type: textarea
+    id: probleme
+    attributes:
+      label: Ce qui se passe
+      description: Étapes pour reproduire, ce que vous attendiez, ce qui arrive.
+    validations:
+      required: true
+  - type: textarea
+    id: journaux
+    attributes:
+      label: Journaux
+      description: Par exemple /var/log/tunudan-install-desktop.log ou la sortie du build.
+      render: text

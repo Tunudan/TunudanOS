@@ -1,5 +1,9 @@
 # Tunudan OS
 
+[![Tunudan OS](https://github.com/Tunudan/TunudanOS/actions/workflows/build.yml/badge.svg)](https://github.com/Tunudan/TunudanOS/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/Tunudan/TunudanOS)](https://github.com/Tunudan/TunudanOS/releases/latest)
+[![Licence](https://img.shields.io/badge/licence-GPL--3.0%2B%20%2F%20CC%20BY--SA%204.0-orange)](LICENSE)
+
 **Apprendre. Coder. Avancer.** La distribution Linux de [Tunudan](https://tunudan.fr) :
 orange, noir, origami.
 
@@ -38,6 +42,19 @@ Les ISO arrivent dans `out/iso/` avec leur somme SHA-256. Le premier build est
 long (téléchargement des paquets). Les suivants réutilisent le cache Docker
 `tunudan-cache`. L'édition Débutant télécharge l'ISO officielle de Linux Mint
 (vérifiée par SHA-256) dans `out/cache/` puis la « remasterise ».
+
+### Builds automatiques (GitHub Actions)
+
+`.github/workflows/build.yml` fait le travail sur GitHub :
+
+- **pull request** : `make lint` seulement ;
+- **push sur `main`** : lint + les 4 ISO, téléchargeables 7 jours (onglet *Actions*, *Artifacts*) ;
+- **tag `v*`** (`git tag v0.4.0 && git push --tags`) : les 4 ISO + Avancé cyber, publiés dans
+  une *Release* (le tag doit correspondre au fichier `VERSION`) ; les ISO de plus de 2 Go sont
+  coupées en `.part00`, `.part01`… (`cat *.part* > fichier.iso`) ;
+- **à la main** : *Actions* > *Tunudan OS* > *Run workflow*, édition au choix.
+
+Les modifications de `*.md` et `docs/` ne relancent pas de build.
 
 Sans Docker : `sudo debian-live/build-edition.sh avance` sur une Debian 13,
 `sudo mint/build-debutant.sh` sur une Ubuntu 24.04 ou une Mint 22 (après
@@ -93,5 +110,8 @@ Le numéro de téléphone et le serveur RustDesk se règlent dans
 Voir `docs/a-faire.md` : marque INPI, numéro d'assistance, clé GPG du dépôt
 apt, tests sur du vrai matériel.
 
-Licences : code sous GPL-3.0 ou ultérieure, visuels sous CC BY-SA 4.0.
+Pour contribuer (branches, commits, publication d'une version) : [CONTRIBUTING.md](CONTRIBUTING.md).
+Historique : [CHANGELOG.md](CHANGELOG.md).
+
+Licences : code sous GPL-3.0 ou ultérieure, visuels sous CC BY-SA 4.0 (voir [LICENSE](LICENSE)).
 Tunudan OS n'est pas un produit officiel de Debian, de Linux Mint ni d'Arch Linux.

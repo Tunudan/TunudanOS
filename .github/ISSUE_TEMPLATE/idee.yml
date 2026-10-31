@@ -1,0 +1,15 @@
+name: Proposer une idée
+description: Une amélioration ou une nouveauté pour Tunudan OS
+labels: [amélioration]
+body:
+  - type: textarea
+    id: idee
+    attributes:
+      label: L'idée
+    validations:
+      required: true
+  - type: textarea
+    id: pourquoi
+    attributes:
+      label: Pour qui, pourquoi
+      description: Quelle édition, quel public (débutants, élèves, cours cyber…).

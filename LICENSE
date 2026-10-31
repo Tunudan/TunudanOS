@@ -1,0 +1,15 @@
+Tunudan OS
+Copyright (C) 2026 Tunudan <https://tunudan.fr>
+
+Code (scripts, paquets, configurations, outils) :
+  GNU General Public License, version 3 ou (à votre choix) toute version ultérieure.
+  Texte complet : LICENSES/GPL-3.0-or-later.txt
+
+Visuels (logos, fonds d'écran, icônes, thèmes graphiques) :
+  Creative Commons Attribution - Partage dans les mêmes conditions 4.0 International.
+  Texte complet : LICENSES/CC-BY-SA-4.0.txt
+
+Les composants tiers de themes/vendor/ gardent leur propre licence (voir themes/vendor/README.md).
+
+Tunudan OS n'est pas un produit officiel de Debian, de Linux Mint ni d'Arch Linux.
+Le nom et le logo « Tunudan » ne sont pas couverts par ces licences.
