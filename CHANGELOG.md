@@ -5,6 +5,18 @@ numérotation [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- Construction des 4 ISO : arrêt silencieux de live-build (grep sans résultat avec
+  `set -e`/`pipefail`), scripts non exécutables, conflit `.zshrc` avec archiso.
+- Chaque ISO Debian installait les paquets de tous les bureaux et le pack cyber.
+- Noms de paquets : `kde-spectacle` (Debian), `openbsd-netcat` et `otf-font-awesome`
+  (Arch) ; `radare2` (absent de Debian 13) passe en Recommends ; `budgie-screensaver` retiré.
+- Expert : Waybar Tunudan sous niri (DankMaterialShell n'est que dans l'AUR).
+- Menu de démarrage : « Tunudan OS <édition> » et démarrage automatique après 10 s.
+- `/etc/os-release` : le système s'annonce comme Tunudan OS (fastfetch affichait Debian).
+- Avancé : fond d'écran Tunudan sous Xfce 4.20, lanceur « Installer Tunudan OS ».
+- `tests/boot-qemu.sh` : `--headless` ignoré, repli sur `-vga std`, `QEMU_MEM`.
+
 ## [0.4.0] - 2026-10-31
 
 ### Ajouté
