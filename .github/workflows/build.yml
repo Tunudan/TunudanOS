@@ -44,7 +44,7 @@ jobs:
           apt-get install -y -qq --no-install-recommends git ca-certificates shellcheck \
               python3 python3-yaml python3-pip libglib2.0-bin gsettings-desktop-schemas
           pip install --break-system-packages -q kdl-py
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: ./tests/lint.sh
 
   editions:
@@ -78,7 +78,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Vérifier que VERSION correspond au tag
         run: |
           v=$(cat VERSION)
@@ -128,7 +128,7 @@ jobs:
       matrix:
         edition: ${{ fromJSON(needs.editions.outputs.list) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Libérer de la place sur le disque
         run: |
